@@ -1,0 +1,54 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".AddLocationStorage" >
+
+    <RadioGroup
+        android:id="@+id/choiceType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="24dp"
+        android:orientation="horizontal" >
+
+        <RadioButton
+            android:id="@+id/cloudChoice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Online cloud" />
+
+        <RadioButton
+            android:id="@+id/webdavChoice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Webdav server" />
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/instructionChoice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="20dp"
+        android:text="Please, choose a type of server" />
+
+    <LinearLayout
+        android:id="@+id/choiceForm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/choiceType"
+        android:layout_alignRight="@+id/choiceType"
+        android:layout_below="@+id/choiceType"
+        android:layout_marginLeft="14dp"
+        android:layout_marginTop="28dp"
+        android:orientation="vertical" >
+
+    </LinearLayout>
+
+</RelativeLayout>

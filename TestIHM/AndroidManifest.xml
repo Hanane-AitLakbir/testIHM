@@ -46,6 +46,10 @@
             android:name="com.example.testihm.OptionsFragment"
             android:label="@string/title_activity_options_fragment" >
         </activity>
+        <activity
+            android:name="com.example.testihm.AddLocationStorage"
+            android:label="@string/title_activity_add_location_storage" >
+        </activity>
     </application>
 
 </manifest>
