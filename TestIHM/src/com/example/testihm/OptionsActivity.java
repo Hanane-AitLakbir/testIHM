@@ -1,35 +1,25 @@
 package com.example.testihm;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
+import metadata.JSonSerializer;
+import metadata.Metadata;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import android.widget.TextView;
 import android.widget.Toast;
 
 public class OptionsActivity extends Activity {
@@ -70,44 +60,46 @@ public class OptionsActivity extends Activity {
 		//				}
 		//			}
 		//		}
-		ArrayList values = new ArrayList();
-		try {
-			FileInputStream input = new FileInputStream("/sdcard/list.json");
-			BufferedReader reader = new BufferedReader(new InputStreamReader(input,"iso-8859-1"),8);
-			StringBuilder sb = new StringBuilder();
-			String line = null;
-			while ((line = reader.readLine()) != null) {
-				sb.append(line + "\n");
-			}
-			String content = sb.toString();
-			input.close();
-			System.out.println(content);
-			//values.add(content);
-			JSONObject json = new JSONObject(content);
-			Iterator iterator =json.keys();
+		ArrayList<HashMap<String, String>> values = new ArrayList<HashMap<String,String>>();
+
+		
+		
+//			FileInputStream input = new FileInputStream("/sdcard/pip/metadata/cloud/list.json");
+//			BufferedReader reader = new BufferedReader(new InputStreamReader(input,"iso-8859-1"),8);
+//			StringBuilder sb = new StringBuilder();
+//			String line = null;
+//			while ((line = reader.readLine()) != null) {
+//				System.out.println(line);
+//				sb.append(line + "\n");
+//			}
+//			String content = sb.toString();
+//			input.close();
+////			Metadata metadata = new JSonSerializer("metadata/cloud.list.json").deserialize();
+//			System.out.println(content);
+//			//values.add(content);
+//			JSONObject json = new JSONObject(content);
+//			Iterator iterator =json.keys();
 			String current;
-			HashMap<String, String> map;
+			Metadata metadataListCloud = new JSonSerializer("/sdcard/pip/metadata/cloud/list.json").deserialize();
+			HashMap<String, String> map = metadataListCloud.getMap();
+			Iterator<String> iterator = map.keySet().iterator();
+			
+			HashMap<String, String> map2;
 			while(iterator.hasNext()){
-				map = new HashMap<String, String>();
+				map2 = new HashMap<String, String>();
 				current = iterator.next().toString();
-				map.put("nameCloud",current);
-				map.put("type", json.getString(current));
+				map2.put("nameCloud",current);
+				map2.put("type", map.get(current));
 				//values.add(current+" "+ json.getString(current));
-				values.add(map);
-//				ListAdapter adapter = new SimpleAdapter(getApplicationContext(), values, R.layout.list_clouds, new String[] {"nameCloud","type"}, new int[] {R.id.nameCloud,R.id.type});
-//				listView.setAdapter(adapter);
+				values.add(map2);
+				//				ListAdapter adapter = new SimpleAdapter(getApplicationContext(), values, R.layout.list_clouds, new String[] {"nameCloud","type"}, new int[] {R.id.nameCloud,R.id.type});
+				//				listView.setAdapter(adapter);
 			}
 
 
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
+
+			
 		System.out.println(values.toString());
 
 		//Collections.sort(values);
@@ -117,29 +109,73 @@ public class OptionsActivity extends Activity {
 		//listView.setAdapter(adapter);
 		ListAdapter adapter = new SimpleAdapter(getApplicationContext(), values, R.layout.list_clouds, new String[] {"nameCloud","type"}, new int[] {R.id.nameCloud,R.id.type});
 		listView.setAdapter(adapter);
-		
+
 		listView.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
 			public void onItemClick(AdapterView<?> parents, View view, int position, long id) {
 				//WORKING
+				String selectedItem = parents.getItemAtPosition(position).toString();
+				String delims = "[ ,{}=]+";
+				String[] words = selectedItem.split(delims); //Be careful: it begins with "" because selectedItem begins with the delimiter "{"
+				System.out.println(Arrays.toString(words));
 				String path ="click "+ parents.getItemAtPosition(position).toString();
-				Toast toast = Toast.makeText(getApplicationContext(), path, Toast.LENGTH_LONG);
+				Toast toast = Toast.makeText(getApplicationContext(), path, Toast.LENGTH_SHORT);
 				toast.show();
+
+				System.out.println(words[4]);
+				Intent intent = new Intent(getApplicationContext(), DetailedLocationStorage.class);
+				intent.putExtra("name",words[4]);
+				intent.putExtra("type", words[2]);
+				startActivity(intent);
+				
+//				File internalFile = new File(parents.getItemAtPosition(position)+".txt");
+//				try {
+//					FileOutputStream fos = new FileOutputStream(internalFile);
+//					fos.write(parents.getItemAtPosition(position).toString().getBytes());
+//					fos.close();
+//				} catch (IOException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//				
+//				try {
+//					System.out.println(internalFile.getCanonicalPath());
+//				} catch (IOException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//				Toast.makeText(getApplicationContext(), "file saved "+internalFile.getName(), Toast.LENGTH_LONG).show();
+
+				
+				//				String filename = parents.getItemAtPosition(position).toString();
+				//				if (path2.endsWith(File.separator)) {
+				//					filename = path2 + filename;
+				//				} else {
+				//					filename = path2 + File.separator + filename;
+				//				}
+				//				if (new File(filename).isDirectory()) {
+				//					Intent intent = new Intent(this, ListFileActivity.class);
+				//					intent.putExtra("path", filename);
+				//					startActivity(intent);
+				//					ll.removeAllViews();
+				//
+				//				} else {
+				//					Toast.makeText(getApplicationContext(), filename + " is not a directory", Toast.LENGTH_LONG).show();
+				//				}
+
 			}
 		});
-
-
 
 		cloud.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
-				
 				Intent intent = new Intent(OptionsActivity.this, AddLocationStorage.class);
 				startActivity(intent);
 			}
 		}
 				);
+		
 	}
 
 	@Override
@@ -148,5 +184,6 @@ public class OptionsActivity extends Activity {
 		getMenuInflater().inflate(R.menu.options, menu);
 		return true;
 	}
+
 
 }

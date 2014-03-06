@@ -1,11 +1,11 @@
 package com.example.testihm;
 
-import org.json.JSONObject;
-
-import metadata.Cloud;
+import metadata.JSonSerializer;
+import metadata.Metadata;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class AddLocationStorage extends Activity {
 
@@ -81,17 +82,39 @@ public class AddLocationStorage extends Activity {
 				//add onClickListener to save
 				save.setOnClickListener(new OnClickListener() {
 					public void onClick(View v) {
-						Cloud cloud = new Cloud();
-						//add all characteristics typed by the user
-						cloud.setName(name.getText().toString());
-						cloud.setRequestToken(requestToken.getText().toString());
-						cloud.setAccessToken(accessToken.getText().toString());
-						cloud.setAuthorizeToken(authorizeToken.getText().toString());
-						cloud.setDownload(downloadURL.getText().toString());
-						cloud.setUpload(uploadURL.getText().toString());
-						cloud.setAppKey(appKey.getText().toString());
-						cloud.setAppSecret(appSecret.getText().toString());
-						System.out.println(cloud.toString()); //to be replaced with metadata creation and serialization
+//						Cloud cloud = new Cloud();
+//						//add all characteristics typed by the user
+//						cloud.setName(name.getText().toString());
+//						cloud.setRequestToken(requestToken.getText().toString());
+//						cloud.setAccessToken(accessToken.getText().toString());
+//						cloud.setAuthorizeToken(authorizeToken.getText().toString());
+//						cloud.setDownload(downloadURL.getText().toString());
+//						cloud.setUpload(uploadURL.getText().toString());
+//						cloud.setAppKey(appKey.getText().toString());
+//						cloud.setAppSecret(appSecret.getText().toString());
+//						System.out.println(cloud.toString()); //to be replaced with metadata creation and serialization
+						
+						//create the metadata of the cloud
+						Metadata metadata = new Metadata();
+						metadata.addContent("name", name.getText().toString());
+						metadata.addContent("requestToken", requestToken.getText().toString());
+						metadata.addContent("accessToken", accessToken.getText().toString());
+						metadata.addContent("authorize", authorizeToken.getText().toString());
+						metadata.addContent("download", downloadURL.getText().toString());
+						metadata.addContent("upload", uploadURL.getText().toString());
+						metadata.addContent("app_key", appKey.getText().toString());
+						metadata.addContent("app_secret", appSecret.getText().toString());
+						metadata.serialize(Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/cloud/"+name.getText().toString()+".json");
+						
+						//update the list of storage locations
+						Metadata listCloud= new JSonSerializer(Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/cloud/list.json").deserialize();
+						if(listCloud==null){
+							listCloud = new Metadata();
+						}
+						listCloud.addContent(name.getText().toString(), "cloud");
+						listCloud.serialize(Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/cloud/list.json");
+						
+						Toast.makeText(getApplicationContext(), "metadata created", Toast.LENGTH_LONG).show();
 						
 						Intent intent = new Intent(AddLocationStorage.this, OptionsActivity.class);
 						startActivity(intent);

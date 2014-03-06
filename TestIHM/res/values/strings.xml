@@ -12,5 +12,6 @@
     <string name="title_activity_options_frag">OptionsFrag</string>
     <string name="title_activity_options_fragment">OptionsFragment</string>
     <string name="title_activity_add_location_storage">AddLocationStorage</string>
+    <string name="title_activity_detailed_location_storage">DetailedLocationStorage</string>
 
 </resources>
