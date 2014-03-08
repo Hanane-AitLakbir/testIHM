@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">TestIHM</string>
+    <string name="action_settings">Paramètres de configuration</string>
+    <string name="hello_world">Bonjour le monde (oui je sais quand c\'est traduit c\'est moi impressionant ^^)</string>
+    <string name="title_activity_upload">Chargement</string>
+    <string name="title_activity_download">Téléchargement</string>
+    <string name="title_activity_options">Options</string>
+    <string name="title_activity_fragment_list">FragmentList</string>
+    <string name="text_empty"></string>
+    <string name="title_activity_options_frag">OptionsFrag</string>
+    <string name="title_activity_options_fragment">OptionsFragment</string>
+    <string name="title_activity_add_location_storage">Ajouter un emplacement de stockage</string>
+    <string name="title_activity_detailed_location_storage">Détails</string>
+	<string name="add_storage_location">Ajouter un nouvel emplacement de stockage</string>
+	<string name="returnButton">Retour</string>
+	<string name="online_cloud">Cloud en ligne</string>
+	<string name="webdav_server">Serveur webdav</string>
+	<string name="instruction_typeChoice">Choississez le type de serveur</string>
+	<string name="detailed_information">Informations détaillées</string>
+	<string name="deleteButton">Supprimer</string>
+	<string name="downloadButton">Télécharger un fichier </string>
+	<string name="uploadButton">Charger un fichier</string>
+</resources>
