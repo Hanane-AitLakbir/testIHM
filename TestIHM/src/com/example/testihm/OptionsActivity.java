@@ -10,6 +10,7 @@ import metadata.Metadata;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -30,7 +31,7 @@ public class OptionsActivity extends Activity {
 		setContentView(R.layout.activity_options);
 
 		Button cloud = (Button) findViewById(R.id.cloud);
-		//Button webdav = (Button) findViewById(R.id.webdav);
+		Button back = (Button) findViewById(R.id.back);
 
 		final LinearLayout ll = (LinearLayout) findViewById(R.id.parentLayout);
 
@@ -62,44 +63,44 @@ public class OptionsActivity extends Activity {
 		//		}
 		ArrayList<HashMap<String, String>> values = new ArrayList<HashMap<String,String>>();
 
-		
-		
-//			FileInputStream input = new FileInputStream("/sdcard/pip/metadata/cloud/list.json");
-//			BufferedReader reader = new BufferedReader(new InputStreamReader(input,"iso-8859-1"),8);
-//			StringBuilder sb = new StringBuilder();
-//			String line = null;
-//			while ((line = reader.readLine()) != null) {
-//				System.out.println(line);
-//				sb.append(line + "\n");
-//			}
-//			String content = sb.toString();
-//			input.close();
-////			Metadata metadata = new JSonSerializer("metadata/cloud.list.json").deserialize();
-//			System.out.println(content);
-//			//values.add(content);
-//			JSONObject json = new JSONObject(content);
-//			Iterator iterator =json.keys();
-			String current;
-			Metadata metadataListCloud = new JSonSerializer("/sdcard/pip/metadata/cloud/list.json").deserialize();
-			HashMap<String, String> map = metadataListCloud.getMap();
-			Iterator<String> iterator = map.keySet().iterator();
-			
-			HashMap<String, String> map2;
-			while(iterator.hasNext()){
-				map2 = new HashMap<String, String>();
-				current = iterator.next().toString();
-				map2.put("nameCloud",current);
-				map2.put("type", map.get(current));
-				//values.add(current+" "+ json.getString(current));
-				values.add(map2);
-				//				ListAdapter adapter = new SimpleAdapter(getApplicationContext(), values, R.layout.list_clouds, new String[] {"nameCloud","type"}, new int[] {R.id.nameCloud,R.id.type});
-				//				listView.setAdapter(adapter);
-			}
+
+
+		//			FileInputStream input = new FileInputStream("/sdcard/pip/metadata/cloud/list.json");
+		//			BufferedReader reader = new BufferedReader(new InputStreamReader(input,"iso-8859-1"),8);
+		//			StringBuilder sb = new StringBuilder();
+		//			String line = null;
+		//			while ((line = reader.readLine()) != null) {
+		//				System.out.println(line);
+		//				sb.append(line + "\n");
+		//			}
+		//			String content = sb.toString();
+		//			input.close();
+		////			Metadata metadata = new JSonSerializer("metadata/cloud.list.json").deserialize();
+		//			System.out.println(content);
+		//			//values.add(content);
+		//			JSONObject json = new JSONObject(content);
+		//			Iterator iterator =json.keys();
+		String current;
+		Metadata metadataListCloud = new JSonSerializer(Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/cloud/list.json").deserialize();
+		HashMap<String, String> map = metadataListCloud.getMap();
+		Iterator<String> iterator = map.keySet().iterator();
+
+		HashMap<String, String> map2;
+		while(iterator.hasNext()){
+			map2 = new HashMap<String, String>();
+			current = iterator.next().toString();
+			map2.put("nameCloud",current);
+			map2.put("type", map.get(current));
+			//values.add(current+" "+ json.getString(current));
+			values.add(map2);
+			//				ListAdapter adapter = new SimpleAdapter(getApplicationContext(), values, R.layout.list_clouds, new String[] {"nameCloud","type"}, new int[] {R.id.nameCloud,R.id.type});
+			//				listView.setAdapter(adapter);
+		}
 
 
 
 
-			
+
 		System.out.println(values.toString());
 
 		//Collections.sort(values);
@@ -128,26 +129,26 @@ public class OptionsActivity extends Activity {
 				intent.putExtra("name",words[4]);
 				intent.putExtra("type", words[2]);
 				startActivity(intent);
-				
-//				File internalFile = new File(parents.getItemAtPosition(position)+".txt");
-//				try {
-//					FileOutputStream fos = new FileOutputStream(internalFile);
-//					fos.write(parents.getItemAtPosition(position).toString().getBytes());
-//					fos.close();
-//				} catch (IOException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-//				
-//				try {
-//					System.out.println(internalFile.getCanonicalPath());
-//				} catch (IOException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-//				Toast.makeText(getApplicationContext(), "file saved "+internalFile.getName(), Toast.LENGTH_LONG).show();
 
-				
+				//				File internalFile = new File(parents.getItemAtPosition(position)+".txt");
+				//				try {
+				//					FileOutputStream fos = new FileOutputStream(internalFile);
+				//					fos.write(parents.getItemAtPosition(position).toString().getBytes());
+				//					fos.close();
+				//				} catch (IOException e) {
+				//					
+				//					e.printStackTrace();
+				//				}
+				//				
+				//				try {
+				//					System.out.println(internalFile.getCanonicalPath());
+				//				} catch (IOException e) {
+				//					
+				//					e.printStackTrace();
+				//				}
+				//				Toast.makeText(getApplicationContext(), "file saved "+internalFile.getName(), Toast.LENGTH_LONG).show();
+
+
 				//				String filename = parents.getItemAtPosition(position).toString();
 				//				if (path2.endsWith(File.separator)) {
 				//					filename = path2 + filename;
@@ -171,11 +172,22 @@ public class OptionsActivity extends Activity {
 			@Override
 			public void onClick(View arg0) {
 				Intent intent = new Intent(OptionsActivity.this, AddLocationStorage.class);
+				intent.putExtra("type", "cloud");
 				startActivity(intent);
 			}
 		}
 				);
 		
+		back.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+				startActivity(intent);
+			}
+		});
+
+
 	}
 
 	@Override

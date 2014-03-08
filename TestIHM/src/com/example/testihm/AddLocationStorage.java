@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
+import android.text.InputType;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -120,6 +121,71 @@ public class AddLocationStorage extends Activity {
 						startActivity(intent);
 					}
 				});
+			}
+		});
+	
+		webdavChoice.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				ll.removeAllViews();
+				TextView tv=new TextView(getApplicationContext());
+				tv.setText("Name");
+				ll.addView(tv);
+				final EditText name=new EditText(getApplicationContext());
+				name.setHint("Please, enter the name");
+				ll.addView(name); 
+				
+				TextView tv2=new TextView(getApplicationContext());
+				tv2.setText("URL of the Webdav server");
+				ll.addView(tv2);
+				final EditText URLServer=new EditText(getApplicationContext());
+				URLServer.setHint("http://");
+				ll.addView(URLServer);
+				
+				TextView tv3=new TextView(getApplicationContext());
+				tv3.setText("Authentication id");
+				ll.addView(tv3);
+				final EditText login=new EditText(getApplicationContext());
+				login.setHint("Enter your login");
+				ll.addView(login);
+				final EditText password=new EditText(getApplicationContext());
+				password.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
+				password.setHint("Enter your password");
+				ll.addView(password);
+				
+				Button save = new Button(getApplicationContext());
+				save.setText("Save");
+				ll.addView(save);
+				
+				save.setOnClickListener(new OnClickListener() {
+					
+					@Override
+					public void onClick(View v) {
+						//create the metadata of the cloud
+						Metadata metadata = new Metadata();
+						metadata.addContent("name", name.getText().toString());
+						metadata.addContent("URLServer", URLServer.getText().toString());
+						metadata.addContent("login", login.getText().toString());
+						metadata.addContent("password", password.getText().toString());
+						metadata.serialize(Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/cloud/"+name.getText().toString()+".json");
+						
+						//update the list of storage locations
+						Metadata listCloud= new JSonSerializer(Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/cloud/list.json").deserialize();
+						if(listCloud==null){
+							listCloud = new Metadata();
+						}
+						listCloud.addContent(name.getText().toString(), "webdav");
+						listCloud.serialize(Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/cloud/list.json");
+						
+						Toast.makeText(getApplicationContext(), "metadata created", Toast.LENGTH_LONG).show();
+						
+						Intent intent = new Intent(AddLocationStorage.this, OptionsActivity.class);
+						startActivity(intent);
+						
+					}
+				});
+				
 			}
 		});
 	}

@@ -21,13 +21,13 @@
             android:id="@+id/cloudChoice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Online cloud" />
+            android:text="@string/online_cloud" />
 
         <RadioButton
             android:id="@+id/webdavChoice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Webdav server" />
+            android:text="@string/webdav_server" />
     </RadioGroup>
 
     <TextView
@@ -36,7 +36,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="20dp"
-        android:text="Please, choose a type of server" />
+        android:text="@string/instruction_typeChoice" />
 
     <LinearLayout
         android:id="@+id/choiceForm"

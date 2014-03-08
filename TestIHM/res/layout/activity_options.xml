@@ -12,30 +12,29 @@
         android:id="@+id/cloud"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/webdav"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="59dp"
-        android:text="Add an online cloud" />
-
-    <Button
-        android:id="@+id/webdav"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/cloud"
         android:layout_centerHorizontal="true"
-        android:text="Add a webdav server" />
+        android:layout_marginTop="59dp"
+        android:text="@string/add_storage_location" />
 
     <LinearLayout
         android:id="@+id/parentLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/webdav"
-        android:layout_marginLeft="19dp"
-        android:layout_marginTop="25dp"
-        android:orientation="vertical" >
+        android:layout_below="@+id/cloud"
+        android:layout_marginTop="34dp"
+        android:orientation="vertical"
+        android:layout_centerHorizontal="true" >
+     
     </LinearLayout>
 
-
+    <Button
+        android:id="@+id/back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/parentLayout"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="34dp"
+        android:text="@string/returnButton" />
 
 </RelativeLayout>

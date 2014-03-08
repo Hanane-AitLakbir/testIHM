@@ -5,18 +5,16 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
-//import java.nio.file.Files;
-//import java.nio.file.Paths;
 
 import metadata.JSonSerializer;
 import metadata.Metadata;
-import utilities.Packet;
 import oauth.signpost.OAuthConsumer;
 import oauth.signpost.OAuthProvider;
 import oauth.signpost.basic.DefaultOAuthConsumer;
@@ -25,6 +23,8 @@ import oauth.signpost.exception.OAuthCommunicationException;
 import oauth.signpost.exception.OAuthExpectationFailedException;
 import oauth.signpost.exception.OAuthMessageSignerException;
 import oauth.signpost.exception.OAuthNotAuthorizedException;
+import utilities.Packet;
+import android.os.Environment;
 
 
 public class ProviderCloud implements Provider{
@@ -37,8 +37,9 @@ public class ProviderCloud implements Provider{
 
 	@Override
 	public void connect() throws CloudNotAvailableException {
-		Metadata metadata = new JSonSerializer("metadata/cloud/"+nameCloud+".json").deserialize();
-		if(metadata.browse("tokenA")==null && metadata.browse("tokenS")==null){
+		Metadata metadata = new JSonSerializer(Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/cloud/"+nameCloud+".json").deserialize();
+		//launch connection request only if the tokens are empty (ie first connection) 
+		if(metadata.browse("TokenS")==null || metadata.browse("TokenA")==null){
 			OAuthConsumer consumer = new DefaultOAuthConsumer(metadata.browse("app_key"), metadata.browse("app_secret"));
 
 			OAuthProvider provider = new DefaultOAuthProvider(
@@ -49,12 +50,13 @@ public class ProviderCloud implements Provider{
 			System.out.println("Fetching request token...");
 
 			String authUrl;
+
 			try {
 				authUrl = provider.retrieveRequestToken(consumer, "");
-
 				System.out.println("Now visit:\n" + authUrl + "\n... and grant this app authorization");
 				//java.awt.Desktop.getDesktop().browse(java.net.URI.create(authUrl)); //to open the web browser and the website page ;p
-				
+				//add opening of the web browser in Android  
+
 				System.out.println("Hit ENTER when you're done:");
 
 				BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -65,12 +67,8 @@ public class ProviderCloud implements Provider{
 				provider.retrieveAccessToken(consumer, verificationCode.trim());
 				metadata.addContent("tokenA", consumer.getToken());
 				metadata.addContent("tokenS", consumer.getTokenSecret());
-				metadata.serialize("metadata/cloud/"+nameCloud+".json");
+				metadata.serialize(Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/cloud/"+nameCloud+".json");
 
-
-			}
-			catch(IOException e) {
-				throw new CloudNotAvailableException();
 			} catch (OAuthMessageSignerException e) {
 				throw new CloudNotAvailableException();
 			} catch (OAuthNotAuthorizedException e) {
@@ -78,6 +76,8 @@ public class ProviderCloud implements Provider{
 			} catch (OAuthExpectationFailedException e) {
 				throw new CloudNotAvailableException();
 			} catch (OAuthCommunicationException e) {
+				throw new CloudNotAvailableException();
+			} catch (IOException e) {
 				throw new CloudNotAvailableException();
 			}
 		}
@@ -87,7 +87,7 @@ public class ProviderCloud implements Provider{
 	@Override
 	public void upload(Packet packet) throws CloudNotAvailableException {
 		URL url,url2;
-		Metadata metadata = new JSonSerializer("metadata/cloud/"+nameCloud+".json").deserialize();
+		Metadata metadata = new JSonSerializer(Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/cloud/"+nameCloud+".json").deserialize();
 		OAuthConsumer consumer = new DefaultOAuthConsumer(metadata.browse("app_key"),metadata.browse("app_secret"));
 		consumer.setTokenWithSecret(metadata.browse("tokenA"), metadata.browse("tokenS"));
 		try {
@@ -101,31 +101,59 @@ public class ProviderCloud implements Provider{
 			request2.setDoOutput(true);
 
 			request.setRequestMethod("PUT");
-			request.addRequestProperty("locale ", "");
+			request.addRequestProperty("locale", "");
 			request.addRequestProperty("overwrite", "");
 			request.addRequestProperty("parent_rev", "");
+			request.addRequestProperty("content-Type", "");
 
 			request2.setRequestMethod("PUT");
-			request2.addRequestProperty("locale ", "");
+			request2.addRequestProperty("locale", "");
 			request2.addRequestProperty("overwrite", "");
 			request2.addRequestProperty("parent_rev", "");
+			request2.addRequestProperty("content-Type", "");
 
 			consumer.sign(request);
 			consumer.sign(request2);
+
+			//			System.out.println(request.getRequestProperties().toString());
+			//			System.out.println(request2.getRequestProperties().toString());
+
 			System.out.println("Sending request...");
 
+			System.out.println("request.getOS == null : " + request.getOutputStream()==null);
 			DataOutputStream outputStream = new DataOutputStream(request.getOutputStream());
+
+			System.out.println("outputStream == null : "+ outputStream==null);
+
+			System.out.println("packet content : "+new String(packet.getData()));
+
 			outputStream.write(packet.getData()); //sends the rest of the file
 			System.out.println("Response: " + request.getResponseCode() + " "
 					+ request.getResponseMessage());
+//			InputStreamReader readerError = new InputStreamReader(request.getErrorStream());
+//			BufferedReader bufferError = new BufferedReader(readerError);
+//			String line;
+//			while((line=bufferError.readLine())!=null){
+//				System.out.println(line);	
+//			}
 			outputStream.close();
 
 			File mFile = File.createTempFile("meta", ".tmp");
+			//File mFile = new File(Environment.getExternalStorageDirectory().getPath()+"/pip/meta.json");
 			packet.getMetadata().serialize(mFile.getPath());
 
 			DataOutputStream metaStream = new  DataOutputStream(request2.getOutputStream());
+			FileInputStream mFileInput = new FileInputStream(mFile);
+
+			byte[] buffer = new byte[4096];
+			ByteArrayOutputStream ous = new ByteArrayOutputStream();
+			int read = 0;
+			while ( (read = mFileInput.read(buffer)) != -1 ) {
+				ous.write(buffer, 0, read);
+			}
 
 			//metaStream.write(Files.readAllBytes(Paths.get(mFile.getPath()))); //sends the rest of the file
+			metaStream.write(ous.toByteArray()); //sends the rest of the file
 			System.out.println("Response: " + request2.getResponseCode() + " "
 					+ request2.getResponseMessage());
 			metaStream.close();
@@ -135,10 +163,13 @@ public class ProviderCloud implements Provider{
 		} catch (IOException e) {
 			throw new CloudNotAvailableException();
 		} catch (OAuthMessageSignerException e) {
+			
 			throw new CloudNotAvailableException();
 		} catch (OAuthExpectationFailedException e) {
+			
 			throw new CloudNotAvailableException();
 		} catch (OAuthCommunicationException e) {
+			
 			throw new CloudNotAvailableException();
 		}
 
@@ -148,7 +179,7 @@ public class ProviderCloud implements Provider{
 	@Override
 	public Packet download(String name) throws CloudNotAvailableException{
 
-		Metadata metadata = new JSonSerializer("metadata/cloud/"+nameCloud+".json").deserialize();
+		Metadata metadata = new JSonSerializer(Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/cloud/"+nameCloud+".json").deserialize();
 		URL url,url2;
 		Packet packet=null;
 		try {

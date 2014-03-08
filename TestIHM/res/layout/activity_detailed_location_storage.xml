@@ -13,7 +13,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:text="Detailed information" />
+        android:text="@string/detailed_information" />
 
     <LinearLayout
         android:id="@+id/layout_detailed"
@@ -32,6 +32,15 @@
         android:layout_below="@+id/layout_detailed"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="110dp"
-        android:text="Delete" />
+        android:text="@string/deleteButton" />
+
+    <Button
+        android:id="@+id/backDetailed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/delete"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="21dp"
+        android:text="@string/returnButton" />
 
 </RelativeLayout>

@@ -36,7 +36,8 @@ public class DetailedLocationStorage extends Activity {
 		final String nameFinal = name;
 		
 		Metadata metadataStorageLocation= new JSonSerializer(Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/cloud/"+ name + ".json").deserialize();
-
+		
+		
 		final LinearLayout ll = (LinearLayout) findViewById(R.id.layout_detailed);
 		ll.removeAllViews();
 		ListView listView = new ListView(getApplicationContext());
@@ -67,6 +68,17 @@ public class DetailedLocationStorage extends Activity {
 				//return to the previous activity
 				Intent intent = new Intent(getApplicationContext(), OptionsActivity.class);
 				startActivity(intent);
+			}
+		});
+	
+		Button back = (Button) findViewById(R.id.backDetailed);
+		back.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(getApplicationContext(),OptionsActivity.class);
+				startActivity(intent);
+				
 			}
 		});
 	}
