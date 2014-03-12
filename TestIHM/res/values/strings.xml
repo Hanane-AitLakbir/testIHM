@@ -23,5 +23,6 @@
     <string name="downloadButton">Download a file</string>
     <string name="uploadButton">Upload a file</string>
     <string name="title_activity_upload2">Upload2</string>
+    <string name="title_activity_config_upload">ConfigUploadActivity</string>
 
 </resources>

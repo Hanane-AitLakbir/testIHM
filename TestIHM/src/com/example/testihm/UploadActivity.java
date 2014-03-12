@@ -9,6 +9,7 @@ import com.example.testihm.R;
 import utilities.Packet;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.Menu;
@@ -32,6 +33,7 @@ public class UploadActivity extends Activity {
 	private List<String> path = null;
 	private String root;
 	private TextView myPath;
+	private String selectedFile;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -90,20 +92,29 @@ public class UploadActivity extends Activity {
 					if(file.canRead()){
 						getDir(path.get(position),listFile);
 					}else{
-						new AlertDialog.Builder(getApplicationContext())
-						.setIcon(R.drawable.ic_launcher)
-						.setTitle("[" + file.getName() + "] folder can't be read!")
-						.setPositiveButton("OK", null).show(); 
+						Toast.makeText(getApplicationContext(), "You can't read this file.", Toast.LENGTH_SHORT).show();
 					} 
 				}else {
-					new AlertDialog.Builder(getApplicationContext())
-					.setIcon(R.drawable.ic_launcher)
-					.setTitle("[" + file.getName() + "]")
-					.setPositiveButton("OK", null).show();
+					Toast.makeText(getApplicationContext(), "["+file.getName()+"]", Toast.LENGTH_SHORT).show();
+					TextView textView = (TextView) findViewById(R.id.fileToUpload);
+					textView.setText(file.getName());
+					selectedFile = file.getName();
 				}
 			}
 		});
-
+		
+		//Add the button "Next" listener to go to the config activity for uploading (allocation strategy, clouds name,...)
+		Button toConfigUpload = (Button) findViewById(R.id.toUploadOptions);
+		toConfigUpload.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				Intent intent = new Intent(UploadActivity.this,ConfigUploadActivity.class);
+				intent.putExtra("fileToUpload",selectedFile);
+				startActivity(intent);
+			}
+		});
+		
 	}
 
 	@Override
