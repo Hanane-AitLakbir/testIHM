@@ -13,13 +13,15 @@
     <string name="title_activity_options_fragment">OptionsFragment</string>
     <string name="title_activity_add_location_storage">AddLocationStorage</string>
     <string name="title_activity_detailed_location_storage">DetailedLocationStorage</string>
-	<string name="add_storage_location">Add a new storage location</string>
-	<string name="returnButton">Return</string>
-	<string name="online_cloud">Online cloud</string>
-	<string name="webdav_server">Webdav server</string>
-	<string name="instruction_typeChoice">Please, choose a type of server</string>
-	<string name="detailed_information">Detailed information</string>
-	<string name="deleteButton">Delete</string>
-	<string name="downloadButton">Download a file</string>
-	<string name="uploadButton">Upload a file</string>
+    <string name="add_storage_location">Add a new storage location</string>
+    <string name="returnButton">Return</string>
+    <string name="online_cloud">Online cloud</string>
+    <string name="webdav_server">Webdav server</string>
+    <string name="instruction_typeChoice">Please, choose a type of server</string>
+    <string name="detailed_information">Detailed information</string>
+    <string name="deleteButton">Delete</string>
+    <string name="downloadButton">Download a file</string>
+    <string name="uploadButton">Upload a file</string>
+    <string name="title_activity_upload2">Upload2</string>
+
 </resources>

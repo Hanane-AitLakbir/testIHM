@@ -2,16 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".UploadActivity" >
-
-    <Button
-        android:id="@+id/testUpload"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:layout_marginTop="103dp"
-        android:text="Test Upload package" />
+    android:orientation="vertical" >
 
     <TextView
         android:id="@+id/path"
@@ -19,19 +10,20 @@
         android:layout_height="wrap_content" />
 
     <ListView
-        android:id="@+id/list"
+        android:id="@android:id/list"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_weight="60"
         android:isScrollContainer="true"
-        android:scrollbars="vertical" />
+        android:scrollbars="vertical" 
+       />
 
     <TextView
         android:id="@android:id/empty"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="No Data" />
-
+    
     <TextView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -45,5 +37,6 @@
         android:layout_weight="60"
         android:isScrollContainer="true"
         android:scrollbars="vertical" />
+
 
 </LinearLayout>
