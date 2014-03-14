@@ -22,4 +22,5 @@
 	<string name="deleteButton">Supprimer</string>
 	<string name="downloadButton">Télécharger un fichier </string>
 	<string name="uploadButton">Charger un fichier</string>
+	<string name="messageChoiceNbPackets">Combien de paquets voulez-vous créer ?</string>
 </resources>

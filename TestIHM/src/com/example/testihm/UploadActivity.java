@@ -49,7 +49,7 @@ public class UploadActivity extends Activity {
 			@Override
 			public void onClick(View arg0) {
 				byte[] data = "Aujourd'hui il fait beau".getBytes();
-				Packet packet = new Packet("YouGonnaToWorkF__kingAndroid.txt", data);
+				Packet packet = new Packet("YouGonnaToWorkF__kingAndroid2.txt", data);
 				Provider provider = new ProviderCloud("dropbox");
 				try {
 					provider.upload(packet);
@@ -98,7 +98,7 @@ public class UploadActivity extends Activity {
 					Toast.makeText(getApplicationContext(), "["+file.getName()+"]", Toast.LENGTH_SHORT).show();
 					TextView textView = (TextView) findViewById(R.id.fileToUpload);
 					textView.setText(file.getName());
-					selectedFile = file.getName();
+					selectedFile = file.getPath();
 				}
 			}
 		});

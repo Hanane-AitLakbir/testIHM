@@ -87,12 +87,22 @@ public class ProviderCloud implements Provider{
 	@Override
 	public void upload(Packet packet) throws CloudNotAvailableException {
 		URL url,url2;
+		
 		Metadata metadata = new JSonSerializer(Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/cloud/"+nameCloud+".json").deserialize();
 		OAuthConsumer consumer = new DefaultOAuthConsumer(metadata.browse("app_key"),metadata.browse("app_secret"));
 		consumer.setTokenWithSecret(metadata.browse("tokenA"), metadata.browse("tokenS"));
 		try {
-			url = new URL(metadata.browse("upload")+ packet.getName()+"?param=UTF-8");
-			url2 = new URL(metadata.browse("upload")+ packet.getName()+".json?param=UTF-8");
+			//test if "/" is contained in packet.getName() because the folder will not be created in the cloud
+			String simpleName;
+			if(packet.getName().contains("/")){
+				simpleName=packet.getName().substring(packet.getName().lastIndexOf("/")+1);
+			}else{
+				simpleName=packet.getName();
+			}
+			System.out.println("simple name "+simpleName);
+			
+			url = new URL(metadata.browse("upload")+ simpleName+"?param=UTF-8");
+			url2 = new URL(metadata.browse("upload")+ simpleName+".json?param=UTF-8");
 
 			HttpURLConnection request = (HttpURLConnection) url.openConnection();
 			HttpURLConnection request2 = (HttpURLConnection) url2.openConnection();
@@ -120,28 +130,16 @@ public class ProviderCloud implements Provider{
 
 			System.out.println("Sending request...");
 
-			System.out.println("request.getOS == null : " + request.getOutputStream()==null);
 			DataOutputStream outputStream = new DataOutputStream(request.getOutputStream());
 
-			System.out.println("outputStream == null : "+ outputStream==null);
-
-			System.out.println("packet content : "+new String(packet.getData()));
-
 			outputStream.write(packet.getData()); //sends the rest of the file
-			System.out.println("Response: " + request.getResponseCode() + " "
-					+ request.getResponseMessage());
-//			InputStreamReader readerError = new InputStreamReader(request.getErrorStream());
-//			BufferedReader bufferError = new BufferedReader(readerError);
-//			String line;
-//			while((line=bufferError.readLine())!=null){
-//				System.out.println(line);	
-//			}
+			System.out.println("Response: " + request.getResponseCode() + " "+ request.getResponseMessage());
 			outputStream.close();
 
-			File mFile = File.createTempFile("meta", ".tmp");
-			//File mFile = new File(Environment.getExternalStorageDirectory().getPath()+"/pip/meta.json");
+			//File mFile = File.createTempFile("meta", ".tmp");
+			File mFile = new File(Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/file/meta.json");
 			packet.getMetadata().serialize(mFile.getPath());
-
+			
 			DataOutputStream metaStream = new  DataOutputStream(request2.getOutputStream());
 			FileInputStream mFileInput = new FileInputStream(mFile);
 
@@ -154,22 +152,23 @@ public class ProviderCloud implements Provider{
 
 			//metaStream.write(Files.readAllBytes(Paths.get(mFile.getPath()))); //sends the rest of the file
 			metaStream.write(ous.toByteArray()); //sends the rest of the file
-			System.out.println("Response: " + request2.getResponseCode() + " "
-					+ request2.getResponseMessage());
+			System.out.println("Response: " + request2.getResponseCode() + " "+ request2.getResponseMessage());
 			metaStream.close();
-
+			System.out.println("OK");
 		} catch (MalformedURLException e) {
+			System.out.println("MalformedURLException");
 			throw new CloudNotAvailableException();
 		} catch (IOException e) {
+			System.out.println("IOException");
 			throw new CloudNotAvailableException();
 		} catch (OAuthMessageSignerException e) {
-			
+			System.out.println("OAuthMessageSignerException");
 			throw new CloudNotAvailableException();
 		} catch (OAuthExpectationFailedException e) {
-			
+			System.out.println("OAuthExpectationFailedException");
 			throw new CloudNotAvailableException();
 		} catch (OAuthCommunicationException e) {
-			
+			System.out.println("OAuthCommunicationException");
 			throw new CloudNotAvailableException();
 		}
 
