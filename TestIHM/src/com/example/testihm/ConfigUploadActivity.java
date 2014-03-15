@@ -9,6 +9,7 @@ import metadata.JSonSerializer;
 import metadata.Metadata;
 import allocation.AllocationStrategy;
 import allocation.ChosenCloud;
+import allocation.InvalidParameterException;
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Environment;
@@ -103,6 +104,9 @@ public class ConfigUploadActivity extends Activity {
 				} catch (FileNotFoundException e) {
 					e.printStackTrace();
 				} catch (IOException e) {
+					e.printStackTrace();
+				} catch (InvalidParameterException e) {
+					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				Toast.makeText(getApplicationContext(), "uploading is a success", Toast.LENGTH_SHORT).show();
