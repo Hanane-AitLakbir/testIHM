@@ -1,13 +1,24 @@
 package com.example.testihm;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+
+import metadata.JSonSerializer;
+import metadata.Metadata;
 import utilities.ComputeChecksum;
 import utilities.Packet;
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListAdapter;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import connection.CloudNotAvailableException;
 import connection.ProviderCloud;
@@ -37,6 +48,24 @@ public class DownloadActivity extends Activity {
 				}
 			}
 		});
+		
+		ListView listview = (ListView) findViewById(R.id.listDownload);
+		//populate the listvew with the name of files stored onto clouds
+		ArrayList<String> values = new ArrayList<String>();
+		
+		Metadata metadataListCloud = new JSonSerializer(Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/files List.json").deserialize();
+		HashMap<String, String> map = metadataListCloud.getMap();
+		Iterator<String> iterator = map.keySet().iterator();
+
+		while(iterator.hasNext()){
+			values.add(iterator.next());
+		}
+
+		System.out.println(values.toString());
+
+		// Put the data in the list
+		ListAdapter adapter = new ArrayAdapter(getApplicationContext(), R.layout.row,values);
+		listview.setAdapter(adapter);
 	}
 
 	@Override
