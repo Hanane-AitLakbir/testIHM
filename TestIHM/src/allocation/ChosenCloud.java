@@ -41,7 +41,11 @@ public class ChosenCloud implements AllocationStrategy{
 		Packet[] codedPackets = coder.encode(splittedPackets);
 		
 		int nbrOfClouds = clouds.length;
-		Provider provider;
+		Provider[] providers = new Provider[nbrOfClouds];
+		for(int i=0; i<nbrOfClouds; i++){
+			providers[i] = ProviderFactory.getProvider(clouds[i]);
+		}
+		System.out.println("getProviders OK");
 		int i=0;
 		metadata.addContent("name", fileName);
 		metadata.addContent("checksum", ComputeChecksum.getChecksum(new File(fileName)));
@@ -50,15 +54,13 @@ public class ChosenCloud implements AllocationStrategy{
 		
 		while(i<codedPackets.length){
 			System.out.println("chosenCloud "+clouds[i%nbrOfClouds]);
-			provider = ProviderFactory.getProvider(clouds[i%nbrOfClouds]);
-			System.out.println("getProvider OK");
 			try {
-				provider.upload(codedPackets[i]);
-				//i++;
+				providers[i%nbrOfClouds].upload(codedPackets[i]);
 				metadata.addContent("cloud"+i, clouds[i%nbrOfClouds]);
 				i++;
 			} catch (CloudNotAvailableException e) {
 				clouds[i%nbrOfClouds] = askForCloud();
+				providers[i%nbrOfClouds] = ProviderFactory.getProvider(clouds[i%nbrOfClouds]);
 			}
 		}
 		String name = fileName.substring(fileName.lastIndexOf("/")+1); //fileName gets the name of the folder and +1 to remove the slash
