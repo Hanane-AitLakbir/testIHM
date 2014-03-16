@@ -59,11 +59,11 @@ public class ChosenCloud implements AllocationStrategy{
 				clouds[i%nbrOfClouds] = askForCloud();
 			}
 		}
-		String name = fileName.substring(fileName.lastIndexOf("/")); //fileName gets the name of the folder 
+		String name = fileName.substring(fileName.lastIndexOf("/")+1); //fileName gets the name of the folder and +1 to remove the slash
 		metadata.serialize(Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/file/"+name+".json");
 		Metadata filesMetadata = new JSonSerializer(Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/files List.json").deserialize();
 		//TODO I don't know what to put in here...
-		filesMetadata.addContent("", "");
+		filesMetadata.addContent(name, "");
 		filesMetadata.serialize(Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/files List.json");
 		return true;
 	}
