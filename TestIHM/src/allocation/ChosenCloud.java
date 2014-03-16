@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.security.acl.LastOwnerException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -108,7 +109,7 @@ public class ChosenCloud implements AllocationStrategy{
 			try {
 				providerIndex = clouds.indexOf(packetsToClouds.get(i));
 				if(providerIndex>=0){
-					packets[i] = providers[providerIndex].download(simpleName+"_"+i);
+					packets[i] = providers[providerIndex].download(simpleName+"_"+i+fileName.substring(fileName.lastIndexOf(".")));
 				}
 			} catch (CloudNotAvailableException e) {
 				e.printStackTrace();

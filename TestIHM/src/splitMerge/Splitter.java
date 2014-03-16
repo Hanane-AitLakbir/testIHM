@@ -27,7 +27,7 @@ public class Splitter {
 		
 		data = new byte[(int) (file.length()-size*(nbrOfPackets-1.))];
 		stream.read(data, 0, data.length);
-		packets[nbrOfPackets-1] = new Packet(name+"_"+(nbrOfPackets-1),data);
+		packets[nbrOfPackets-1] = new Packet(name+"_"+(nbrOfPackets-1)+fileName.substring(fileName.lastIndexOf(".")),data);
 		stream.close();
 		return packets;
 	}

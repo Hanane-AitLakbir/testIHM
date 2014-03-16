@@ -87,7 +87,6 @@ public class ProviderCloud implements Provider{
 	@Override
 	public void upload(Packet packet) throws CloudNotAvailableException {
 		URL url,url2;
-		
 		Metadata metadata = new JSonSerializer(Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/cloud/"+nameCloud+".json").deserialize();
 		OAuthConsumer consumer = new DefaultOAuthConsumer(metadata.browse("app_key"),metadata.browse("app_secret"));
 		consumer.setTokenWithSecret(metadata.browse("tokenA"), metadata.browse("tokenS"));
@@ -182,6 +181,7 @@ public class ProviderCloud implements Provider{
 		URL url,url2;
 		Packet packet=null;
 		try {
+			System.out.println("Provider Cloud name "+name);
 			url = new URL(metadata.browse("download")+name);
 			url2 =new URL(metadata.browse("download")+name+".json");
 
