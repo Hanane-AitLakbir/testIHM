@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.acl.LastOwnerException;
 
 import utilities.Packet;
 
@@ -21,7 +22,7 @@ public class Splitter {
 		for(int i=0; i<nbrOfPackets-1; i++){
 			data = new byte[size];
 			stream.read(data, 0, size);
-			packets[i] = new Packet(name+"_"+i,data);
+			packets[i] = new Packet(name+"_"+i+fileName.substring(fileName.lastIndexOf(".")),data);
 		}
 		
 		data = new byte[(int) (file.length()-size*(nbrOfPackets-1.))];

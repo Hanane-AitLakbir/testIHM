@@ -1,25 +1,33 @@
 package com.example.testihm;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import coding.Coder;
+import coding.EmptyCoder;
 import metadata.JSonSerializer;
 import metadata.Metadata;
 import utilities.ComputeChecksum;
 import utilities.Packet;
+import allocation.AllocationStrategy;
+import allocation.ChosenCloud;
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 import connection.CloudNotAvailableException;
 import connection.ProviderCloud;
 
@@ -66,6 +74,27 @@ public class DownloadActivity extends Activity {
 		// Put the data in the list
 		ListAdapter adapter = new ArrayAdapter(getApplicationContext(), R.layout.row,values);
 		listview.setAdapter(adapter);
+		listview.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position,
+					long id) {
+				String fileName = parent.getItemAtPosition(position).toString();
+				AllocationStrategy strategy = new ChosenCloud();
+				String directory = Environment.getExternalStorageDirectory().getPath() + "/cloud";
+				Coder coder = new EmptyCoder();
+				
+				try {
+					strategy.downLoad(fileName, directory, coder);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				
+				Toast.makeText(getApplicationContext(), "Download succesful", Toast.LENGTH_SHORT).show();
+			}
+		});
+		
+		
 	}
 
 	@Override

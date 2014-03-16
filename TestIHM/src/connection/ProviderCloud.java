@@ -205,10 +205,10 @@ public class ProviderCloud implements Provider{
 			System.out.println("Sending request...");
 			request.connect();
 			request2.connect();
-
+			
 			DataInputStream inputStream = new DataInputStream(request.getInputStream());
 			DataInputStream metaStream = new DataInputStream(request2.getInputStream());
-
+			
 			packet = new Packet(name,toByteArray(inputStream));
 			packet.setMetadata(new JSonSerializer().deserializeStream(metaStream));
 
