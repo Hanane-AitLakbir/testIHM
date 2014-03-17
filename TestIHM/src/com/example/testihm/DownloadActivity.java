@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import coding.Coder;
-import coding.EmptyCoder;
 import metadata.JSonSerializer;
 import metadata.Metadata;
 import utilities.ComputeChecksum;
@@ -14,6 +12,7 @@ import utilities.Packet;
 import allocation.AllocationStrategy;
 import allocation.ChosenCloud;
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.Menu;
@@ -25,9 +24,10 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
+import coding.Coder;
+import coding.EmptyCoder;
 import connection.CloudNotAvailableException;
 import connection.ProviderCloud;
 
@@ -94,7 +94,17 @@ public class DownloadActivity extends Activity {
 			}
 		});
 		
-		
+		//add button : return to previous activity
+		Button returnButton = (Button) findViewById(R.id.returnDownload);
+		returnButton.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(DownloadActivity.this,MainActivity.class);
+				startActivity(intent);
+				
+			}
+		});
 	}
 
 	@Override

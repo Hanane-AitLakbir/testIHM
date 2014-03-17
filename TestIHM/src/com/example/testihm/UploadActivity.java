@@ -115,6 +115,15 @@ public class UploadActivity extends Activity {
 			}
 		});
 		
+		Button returnButton = (Button) findViewById(R.id.returnUpload);
+		returnButton.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				Intent intent = new Intent(UploadActivity.this, MainActivity.class);
+				startActivity(intent);
+			}
+		});
 	}
 
 	@Override

@@ -10,13 +10,17 @@ import metadata.Metadata;
 import allocation.AllocationStrategy;
 import allocation.ChosenCloud;
 import allocation.InvalidParameterException;
+import coding.Coder;
+import coding.EmptyCoder;
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnFocusChangeListener;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -24,20 +28,20 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-import coding.Coder;
-import coding.EmptyCoder;
+
 
 public class ConfigUploadActivity extends Activity {
 
 	private String fileToUpload;
 	private int nbPackets=1; //default value 1 
 	private ArrayList<String> chosenCloudsList = new ArrayList<String>();
+	Context context;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_config_upload);
+		context=this;
 		
 		Bundle bundle = getIntent().getExtras();
 		if(bundle!=null){
@@ -84,6 +88,8 @@ public class ConfigUploadActivity extends Activity {
 				//Toast.makeText(getApplicationContext(), chosenCloudsList.toString(), Toast.LENGTH_SHORT).show();
 				//System.out.println(chosenCloudsList);
 				//System.out.println(fileToUpload);
+				//ProgressDialog progress = ProgressDialog.show(context, "Please wait","We (actually I am alone...) are uploading the file ...", true);
+				
 				EditText inputNbPacket = (EditText) findViewById(R.id.inputChoiceNbPackets);
 				
 				nbPackets=Integer.parseInt(inputNbPacket.getText().toString());
@@ -101,6 +107,7 @@ public class ConfigUploadActivity extends Activity {
 				
 				try {
 					strategy.upLoad(fileToUpload, nbPackets,clouds, coder);
+					//it should return a boolean to implement the progress dialog
 				} catch (FileNotFoundException e) {
 					e.printStackTrace();
 				} catch (IOException e) {
@@ -109,7 +116,10 @@ public class ConfigUploadActivity extends Activity {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				Toast.makeText(getApplicationContext(), "uploading is a success", Toast.LENGTH_SHORT).show();
+				//progress.dismiss();
+				//Toast.makeText(getApplicationContext(), "uploading is a success", Toast.LENGTH_SHORT).show();
+				Intent intent = new Intent(ConfigUploadActivity.this,UploadActivity.class);
+				startActivity(intent);
 			}
 		});
 	
