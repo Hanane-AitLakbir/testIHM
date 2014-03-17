@@ -13,6 +13,8 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 
+import com.example.testihm.AddLocationStorage;
+
 import metadata.JSonSerializer;
 import metadata.Metadata;
 import oauth.signpost.OAuthConsumer;
@@ -56,6 +58,7 @@ public class ProviderCloud implements Provider{
 				System.out.println("Now visit:\n" + authUrl + "\n... and grant this app authorization");
 				//java.awt.Desktop.getDesktop().browse(java.net.URI.create(authUrl)); //to open the web browser and the website page ;p
 				//add opening of the web browser in Android  
+				AddLocationStorage.openWebBrowser(authUrl);
 
 				System.out.println("Hit ENTER when you're done:");
 

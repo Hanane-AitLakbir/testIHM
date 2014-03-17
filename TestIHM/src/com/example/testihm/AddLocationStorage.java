@@ -1,9 +1,14 @@
 package com.example.testihm;
 
+import connection.CloudNotAvailableException;
+import connection.Provider;
+import connection.ProviderFactory;
 import metadata.JSonSerializer;
 import metadata.Metadata;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.InputType;
@@ -21,9 +26,12 @@ import android.widget.Toast;
 
 public class AddLocationStorage extends Activity {
 
+	static Context context;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		context = getApplicationContext();
 		setContentView(R.layout.activity_add_location_storage);
 		RadioButton cloudChoice = (RadioButton) findViewById(R.id.cloudChoice);
 		RadioButton webdavChoice = (RadioButton) findViewById(R.id.webdavChoice);
@@ -177,6 +185,12 @@ public class AddLocationStorage extends Activity {
 						}
 						listCloud.addContent(name.getText().toString(), "webdav");
 						listCloud.serialize(Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/cloud/list.json");
+						Provider provider = ProviderFactory.getProvider(name.getText().toString());
+						try {
+							provider.connect();
+						} catch (CloudNotAvailableException e) {
+							e.printStackTrace();
+						}
 						
 						Toast.makeText(getApplicationContext(), "metadata created", Toast.LENGTH_LONG).show();
 						
@@ -197,4 +211,9 @@ public class AddLocationStorage extends Activity {
 		return true;
 	}
 
+	public static void openWebBrowser(String url){
+		Intent intent = new Intent(Intent.ACTION_VIEW);
+		intent.setData(Uri.parse(url));
+		context.startActivity(intent);
+	}
 }
