@@ -44,6 +44,7 @@ public class ChosenCloud implements AllocationStrategy{
 		Provider[] providers = new Provider[nbrOfClouds];
 		for(int i=0; i<nbrOfClouds; i++){
 			providers[i] = ProviderFactory.getProvider(clouds[i]);
+			System.out.println(i+" ok "+ (providers[i]==null));
 		}
 		System.out.println("getProviders OK");
 		int i=0;
@@ -65,7 +66,7 @@ public class ChosenCloud implements AllocationStrategy{
 		}
 		String name = fileName.substring(fileName.lastIndexOf("/")+1); //fileName gets the name of the folder and +1 to remove the slash
 		metadata.serialize(Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/file/"+name+".json");
-		Metadata filesMetadata = new JSonSerializer(Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/files List.json").deserialize();
+		Metadata filesMetadata = new JSonSerializer(Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/file/files List.json").deserialize();
 		filesMetadata.addContent(name, "");
 		filesMetadata.serialize(Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/files List.json");
 		return true;

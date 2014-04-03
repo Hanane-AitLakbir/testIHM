@@ -1,20 +1,16 @@
 package com.example.testihm;
 
-import connection.CloudNotAvailableException;
-import connection.Provider;
-import connection.ProviderFactory;
 import metadata.JSonSerializer;
 import metadata.Metadata;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.InputType;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
@@ -24,14 +20,15 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class AddLocationStorage extends Activity {
-
-	static Context context;
+public class AddLocationStorage extends Activity{
+	
+	private AddLocationStorage thisActivity;
+	private WebView webView;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		context = getApplicationContext();
+		thisActivity = this;
 		setContentView(R.layout.activity_add_location_storage);
 		RadioButton cloudChoice = (RadioButton) findViewById(R.id.cloudChoice);
 		RadioButton webdavChoice = (RadioButton) findViewById(R.id.webdavChoice);
@@ -51,28 +48,29 @@ public class AddLocationStorage extends Activity {
 				name.setHint("Please, enter the name");
 				ll.addView(name); 
 				
-				TextView tv2=new TextView(getApplicationContext());
-				tv2.setText("URL Authentication Oauth");
-				ll.addView(tv2);
-				final EditText requestToken=new EditText(getApplicationContext());
-				requestToken.setHint("Enter the URL - Request Token");
-				ll.addView(requestToken);
-				final EditText accessToken=new EditText(getApplicationContext());
-				accessToken.setHint("Enter the URL - Access Token");
-				ll.addView(accessToken);
-				final EditText authorizeToken=new EditText(getApplicationContext());
-				authorizeToken.setHint("Enter the URL - Authorize Token");
-				ll.addView(authorizeToken);
+//				TextView tv2=new TextView(getApplicationContext());
+//				tv2.setText("URL Authentication Oauth");
+//				ll.addView(tv2);
+//				final EditText requestToken=new EditText(getApplicationContext());
+//				requestToken.setHint("Enter the URL - Request Token");
+//				ll.addView(requestToken);
+//				final EditText accessToken=new EditText(getApplicationContext());
+//				accessToken.setHint("Enter the URL - Access Token");
+//				ll.addView(accessToken);
+//				final EditText authorizeToken=new EditText(getApplicationContext());
+//				authorizeToken.setHint("Enter the URL - Authorize Token");
+//				ll.addView(authorizeToken);
+//				
+//				TextView tv3=new TextView(getApplicationContext());
+//				tv3.setText("URL Upload/Download");
+//				ll.addView(tv3);
+//				final EditText uploadURL=new EditText(getApplicationContext());
+//				uploadURL.setHint("Enter the URL - Upload");
+//				ll.addView(uploadURL);
+//				final EditText downloadURL=new EditText(getApplicationContext());
+//				downloadURL.setHint("Enter the URL - Download");
+//				ll.addView(downloadURL);
 				
-				TextView tv3=new TextView(getApplicationContext());
-				tv3.setText("URL Upload/Download");
-				ll.addView(tv3);
-				final EditText uploadURL=new EditText(getApplicationContext());
-				uploadURL.setHint("Enter the URL - Upload");
-				ll.addView(uploadURL);
-				final EditText downloadURL=new EditText(getApplicationContext());
-				downloadURL.setHint("Enter the URL - Download");
-				ll.addView(downloadURL);
 				
 				TextView tv4=new TextView(getApplicationContext());
 				tv4.setText("Application id");
@@ -83,6 +81,13 @@ public class AddLocationStorage extends Activity {
 				final EditText appSecret=new EditText(getApplicationContext());
 				appSecret.setHint("Enter the app secret");
 				ll.addView(appSecret);
+				
+//				webView = new WebView(getApplicationContext());
+//				LayoutParams params = new LayoutParams(10000,400);
+//				params.setMargins(10, 30, 10, 10);
+//				webView.setLayoutParams(params);
+//				webView.loadUrl("http://www.google.fr");
+//				ll.addView(webView);
 				
 				Button save = new Button(getApplicationContext());
 				save.setText("Save");
@@ -106,11 +111,11 @@ public class AddLocationStorage extends Activity {
 						//create the metadata of the cloud
 						Metadata metadata = new Metadata();
 						metadata.addContent("name", name.getText().toString());
-						metadata.addContent("requestToken", requestToken.getText().toString());
-						metadata.addContent("accessToken", accessToken.getText().toString());
-						metadata.addContent("authorize", authorizeToken.getText().toString());
-						metadata.addContent("download", downloadURL.getText().toString());
-						metadata.addContent("upload", uploadURL.getText().toString());
+//						metadata.addContent("requestToken", requestToken.getText().toString());
+//						metadata.addContent("accessToken", accessToken.getText().toString());
+//						metadata.addContent("authorize", authorizeToken.getText().toString());
+//						metadata.addContent("download", downloadURL.getText().toString());
+//						metadata.addContent("upload", uploadURL.getText().toString());
 						metadata.addContent("app_key", appKey.getText().toString());
 						metadata.addContent("app_secret", appSecret.getText().toString());
 						metadata.serialize(Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/cloud/"+name.getText().toString()+".json");
@@ -120,12 +125,20 @@ public class AddLocationStorage extends Activity {
 						if(listCloud==null){
 							listCloud = new Metadata();
 						}
-						listCloud.addContent(name.getText().toString(), "cloud");
+						listCloud.addContent(name.getText().toString(), "dropbox");
 						listCloud.serialize(Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/cloud/list.json");
+						
+//						Provider provider = ProviderFactory.getProvider(name.getText().toString());
+//						try {
+//							provider.connect(thisActivity);
+//						} catch (CloudNotAvailableException e) {
+//							e.printStackTrace();
+//						}
 						
 						Toast.makeText(getApplicationContext(), "metadata created", Toast.LENGTH_LONG).show();
 						
-						Intent intent = new Intent(AddLocationStorage.this, OptionsActivity.class);
+						Intent intent = new Intent(AddLocationStorage.this, ConnectionActivity.class);
+						intent.putExtra("name",name.getText().toString());
 						startActivity(intent);
 					}
 				});
@@ -185,12 +198,7 @@ public class AddLocationStorage extends Activity {
 						}
 						listCloud.addContent(name.getText().toString(), "webdav");
 						listCloud.serialize(Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/cloud/list.json");
-						Provider provider = ProviderFactory.getProvider(name.getText().toString());
-						try {
-							provider.connect();
-						} catch (CloudNotAvailableException e) {
-							e.printStackTrace();
-						}
+						
 						
 						Toast.makeText(getApplicationContext(), "metadata created", Toast.LENGTH_LONG).show();
 						
@@ -210,10 +218,5 @@ public class AddLocationStorage extends Activity {
 		getMenuInflater().inflate(R.menu.add_location_storage, menu);
 		return true;
 	}
-
-	public static void openWebBrowser(String url){
-		Intent intent = new Intent(Intent.ACTION_VIEW);
-		intent.setData(Uri.parse(url));
-		context.startActivity(intent);
-	}
+	
 }

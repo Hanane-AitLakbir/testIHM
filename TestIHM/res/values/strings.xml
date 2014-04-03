@@ -25,6 +25,6 @@
     <string name="title_activity_upload2">Upload2</string>
     <string name="title_activity_config_upload">ConfigUploadActivity</string>
     <string name="messageChoiceNbPackets">How many packets do you want to create?</string>
-    
+    <string name="title_activity_connection">ConnectionActivity</string>
 
 </resources>

@@ -50,7 +50,7 @@ public class UploadActivity extends Activity {
 			public void onClick(View arg0) {
 				byte[] data = "Aujourd'hui il fait beau".getBytes();
 				Packet packet = new Packet("YouGonnaToWorkF__kingAndroid2.txt", data);
-				Provider provider = new ProviderCloud("dropbox");
+				Provider provider = new ProviderCloud("dropbox","dropbox");
 				try {
 					provider.upload(packet);
 					//System.out.println("packet uploaded");

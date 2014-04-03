@@ -32,22 +32,54 @@ import android.os.Environment;
 public class ProviderCloud implements Provider{
 
 	private String nameCloud; 
+	private String type;
+	public static boolean connected = false;
 
-	public ProviderCloud(String nameCloud) {
+	public ProviderCloud(String nameCloud,String type) {
 		this.nameCloud = nameCloud;
+		this.type = type;
+	}
+
+	public String getUrl(){
+		Metadata metadata = new JSonSerializer(Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/cloud/"+nameCloud+".json").deserialize();
+		OAuthConsumer consumer = new DefaultOAuthConsumer(metadata.browse("app_key"), metadata.browse("app_secret"));
+		Metadata metaPattern = new JSonSerializer(Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/cloud/"+type+"Pattern.json").deserialize();
+
+		OAuthProvider provider = new DefaultOAuthProvider(
+				metaPattern.browse("requestToken"),
+				metaPattern.browse("accessToken"),
+				metaPattern.browse("authorize"));
+
+		System.out.println("Fetching request token...");
+
+		try {
+			String authUrl = provider.retrieveRequestToken(consumer, "");
+			//authUrl = "http://www.google.fr";
+			return authUrl;
+		} catch (OAuthMessageSignerException e) {
+			e.printStackTrace();
+		} catch (OAuthNotAuthorizedException e) {
+			e.printStackTrace();
+		} catch (OAuthExpectationFailedException e) {
+			e.printStackTrace();
+		} catch (OAuthCommunicationException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	@Override
-	public void connect() throws CloudNotAvailableException {
+	public void connect(WebBrowserOpener webBrowserOpener) throws CloudNotAvailableException {
 		Metadata metadata = new JSonSerializer(Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/cloud/"+nameCloud+".json").deserialize();
 		//launch connection request only if the tokens are empty (ie first connection) 
-		if(metadata.browse("TokenS")==null || metadata.browse("TokenA")==null){
+		//if(metadata.browse("TokenS")==null || metadata.browse("TokenA")==null){
 			OAuthConsumer consumer = new DefaultOAuthConsumer(metadata.browse("app_key"), metadata.browse("app_secret"));
+		Metadata metaPattern = new JSonSerializer(Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/cloud/"+type+"Pattern.json").deserialize();
 
 			OAuthProvider provider = new DefaultOAuthProvider(
-					metadata.browse("requestToken"),
-					metadata.browse("accessToken"),
-					metadata.browse("authorize"));
+				metaPattern.browse("requestToken"),
+				metaPattern.browse("accessToken"),
+				metaPattern.browse("authorize"));
 
 			System.out.println("Fetching request token...");
 
@@ -58,12 +90,12 @@ public class ProviderCloud implements Provider{
 				System.out.println("Now visit:\n" + authUrl + "\n... and grant this app authorization");
 				//java.awt.Desktop.getDesktop().browse(java.net.URI.create(authUrl)); //to open the web browser and the website page ;p
 				//add opening of the web browser in Android  
-				AddLocationStorage.openWebBrowser(authUrl);
+			//if(webBrowserOpener!=null) webBrowserOpener.openWebBrowser(authUrl);
 
 				System.out.println("Hit ENTER when you're done:");
+			//while(!connected){}
 
-				BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-				String verificationCode = br.readLine();
+			String verificationCode = "";
 
 				System.out.println("Fetching access token...");
 
@@ -80,10 +112,7 @@ public class ProviderCloud implements Provider{
 				throw new CloudNotAvailableException();
 			} catch (OAuthCommunicationException e) {
 				throw new CloudNotAvailableException();
-			} catch (IOException e) {
-				throw new CloudNotAvailableException();
 			}
-		}
 
 	}
 
@@ -93,6 +122,8 @@ public class ProviderCloud implements Provider{
 		Metadata metadata = new JSonSerializer(Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/cloud/"+nameCloud+".json").deserialize();
 		OAuthConsumer consumer = new DefaultOAuthConsumer(metadata.browse("app_key"),metadata.browse("app_secret"));
 		consumer.setTokenWithSecret(metadata.browse("tokenA"), metadata.browse("tokenS"));
+		Metadata metaPattern = new JSonSerializer(Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/cloud/"+type+"Pattern.json").deserialize();
+
 		try {
 			//test if "/" is contained in packet.getName() because the folder will not be created in the cloud
 			String simpleName;
@@ -103,8 +134,9 @@ public class ProviderCloud implements Provider{
 			}
 			System.out.println("simple name "+simpleName);
 			
-			url = new URL(metadata.browse("upload")+ simpleName+"?param=UTF-8");
-			url2 = new URL(metadata.browse("upload")+ simpleName+".json?param=UTF-8");
+			System.out.println(metaPattern==null);
+			url = new URL(metaPattern.browse("upload")+ simpleName+"?param=UTF-8");
+			url2 = new URL(metaPattern.browse("upload")+ simpleName+".json?param=UTF-8");
 
 			HttpURLConnection request = (HttpURLConnection) url.openConnection();
 			HttpURLConnection request2 = (HttpURLConnection) url2.openConnection();
@@ -183,10 +215,11 @@ public class ProviderCloud implements Provider{
 		Metadata metadata = new JSonSerializer(Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/cloud/"+nameCloud+".json").deserialize();
 		URL url,url2;
 		Packet packet=null;
+		Metadata metaPattern = new JSonSerializer(Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/cloud/"+type+"Pattern.json").deserialize();
 		try {
 			System.out.println("Provider Cloud name "+name);
-			url = new URL(metadata.browse("download")+name);
-			url2 =new URL(metadata.browse("download")+name+".json");
+			url = new URL(metaPattern.browse("download")+name);
+			url2 =new URL(metaPattern.browse("download")+name+".json");
 
 			HttpURLConnection request = (HttpURLConnection) url.openConnection();
 			HttpURLConnection request2 = (HttpURLConnection) url2.openConnection();

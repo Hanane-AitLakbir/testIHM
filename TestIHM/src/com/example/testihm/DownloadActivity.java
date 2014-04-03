@@ -43,7 +43,7 @@ public class DownloadActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				ProviderCloud provider = new ProviderCloud("dropbox");
+				ProviderCloud provider = new ProviderCloud("dropbox","dropbox");
 				Packet packet;
 				try {
 					packet = provider.download("2032.txt");
@@ -81,7 +81,7 @@ public class DownloadActivity extends Activity {
 					long id) {
 				String fileName = parent.getItemAtPosition(position).toString();
 				AllocationStrategy strategy = new ChosenCloud();
-				String directory = Environment.getExternalStorageDirectory().getPath() + "/cloud";
+				String directory = Environment.getExternalStorageDirectory().getPath() + "/downloadPIP";
 				Coder coder = new EmptyCoder();
 				
 				try {

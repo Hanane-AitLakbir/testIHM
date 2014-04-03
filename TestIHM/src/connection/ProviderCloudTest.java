@@ -28,9 +28,9 @@ public class ProviderCloudTest {
 //				System.out.println("meta2 responds " + meta2.browse("name"));
 //				
 
-		Provider provider = new ProviderCloud("dropbox");
+		Provider provider = new ProviderCloud("dropbox1","dropbox");
 		try {
-			provider.connect();
+			provider.connect(null);
 		} catch (CloudNotAvailableException e) {
 			e.printStackTrace();
 		}
@@ -42,7 +42,7 @@ public class ProviderCloudTest {
 	public void testUpload(){
 		byte[] data = "Aujourd'hui il fait beau".getBytes();
 		Packet packet = new Packet("2032.txt", data);
-		Provider provider = new ProviderCloud("dropbox");
+		Provider provider = new ProviderCloud("dropbox1","dropbox");
 		try {
 			provider.upload(packet);
 			System.out.println("packet uploaded");
@@ -52,7 +52,7 @@ public class ProviderCloudTest {
 	}
 
 	public void testDownload(){
-		ProviderCloud provider = new ProviderCloud("dropbox");
+		ProviderCloud provider = new ProviderCloud("dropbox1","dropbox");
 		Packet packet;
 		try {
 			packet = provider.download("2032.txt");
