@@ -28,5 +28,6 @@
     <string name="title_activity_connection">ConnectionActivity</string>
     <string name="alert_message_add_location_storage">Please, enter a valid name</string>
     <string name="alert_title_add_location_storage">Invalid cloud name</string>
+    <string name="edit">Edit</string>
 
 </resources>

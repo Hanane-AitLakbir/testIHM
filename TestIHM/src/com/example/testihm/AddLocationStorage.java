@@ -21,6 +21,7 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,8 +52,18 @@ public class AddLocationStorage extends Activity{
 
 				final EditText name=new EditText(getApplicationContext());
 				name.setHint("Please, enter the name");
-				
 				ll.addView(name); 
+				
+				TextView tv2 = new TextView(getApplicationContext());
+				tv2.setText("Please, choose a type of cloud");
+				ll.addView(tv2);
+				
+				RadioGroup cloudTypeGroup = new RadioGroup(getApplicationContext());
+				cloudTypeGroup.setOrientation(LinearLayout.HORIZONTAL);
+				final RadioButton dropboxType = new RadioButton(getApplicationContext());
+				dropboxType.setText("Dropbox");
+				cloudTypeGroup.addView(dropboxType);
+				ll.addView(cloudTypeGroup);
 
 				//				TextView tv2=new TextView(getApplicationContext());
 				//				tv2.setText("URL Authentication Oauth");
@@ -87,7 +98,26 @@ public class AddLocationStorage extends Activity{
 				final EditText appSecret=new EditText(getApplicationContext());
 				appSecret.setHint("Enter the app secret");
 				ll.addView(appSecret);
-
+				
+				TextView tv5= new TextView(getApplicationContext());
+				tv5.setText("Available storage space");
+				ll.addView(tv5);
+				
+				final EditText availableSpace = new EditText(getApplicationContext());
+				availableSpace.setHint("Enter a number");
+				availableSpace.setInputType(InputType.TYPE_CLASS_NUMBER);
+				ll.addView(availableSpace);
+				
+				RadioGroup unitSpace = new RadioGroup(getApplicationContext());
+				unitSpace.setOrientation(LinearLayout.HORIZONTAL);
+				final RadioButton megaByte = new RadioButton(getApplicationContext());
+				megaByte.setText("MB");
+				final RadioButton gigaByte = new RadioButton(getApplicationContext());
+				gigaByte.setText("GB");
+				unitSpace.addView(megaByte);
+				unitSpace.addView(gigaByte);
+				ll.addView(unitSpace);
+				
 				//				webView = new WebView(getApplicationContext());
 				//				LayoutParams params = new LayoutParams(10000,400);
 				//				params.setMargins(10, 30, 10, 10);
@@ -102,18 +132,14 @@ public class AddLocationStorage extends Activity{
 				//add onClickListener to save
 				save.setOnClickListener(new OnClickListener() {
 					public void onClick(View v) {
-						if(name.getText().toString().length()!=0){
-							//						Cloud cloud = new Cloud();
-							//						//add all characteristics typed by the user
-							//						cloud.setName(name.getText().toString());
-							//						cloud.setRequestToken(requestToken.getText().toString());
-							//						cloud.setAccessToken(accessToken.getText().toString());
-							//						cloud.setAuthorizeToken(authorizeToken.getText().toString());
-							//						cloud.setDownload(downloadURL.getText().toString());
-							//						cloud.setUpload(uploadURL.getText().toString());
-							//						cloud.setAppKey(appKey.getText().toString());
-							//						cloud.setAppSecret(appSecret.getText().toString());
-							//						System.out.println(cloud.toString()); //to be replaced with metadata creation and serialization
+						if(name.getText().toString().length()!=0 && availableSpace.getText().toString().length()!=0){
+							long availableSpaceLong=0;
+							if(megaByte.isChecked()){
+								availableSpaceLong = Long.parseLong(availableSpace.getText().toString())*((long)1024*1024);
+							}else if(gigaByte.isChecked()){
+								availableSpaceLong = Long.parseLong(availableSpace.getText().toString())*((long)1024*1024*1024);
+							}
+							System.out.println("Add location storage " + availableSpaceLong);
 
 							//create the metadata of the cloud
 							Metadata metadata = new Metadata();
@@ -125,6 +151,7 @@ public class AddLocationStorage extends Activity{
 							//						metadata.addContent("upload", uploadURL.getText().toString());
 							metadata.addContent("app_key", appKey.getText().toString());
 							metadata.addContent("app_secret", appSecret.getText().toString());
+							metadata.addContent("space", String.valueOf(availableSpaceLong));
 							metadata.serialize(Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/cloud/"+name.getText().toString()+".json");
 
 							//update the list of storage locations
@@ -132,7 +159,12 @@ public class AddLocationStorage extends Activity{
 							if(listCloud==null){
 								listCloud = new Metadata();
 							}
-							listCloud.addContent(name.getText().toString(), "dropbox");
+							if(dropboxType.isChecked()){
+								listCloud.addContent(name.getText().toString(), "dropbox");
+							}else{
+								listCloud.addContent(name.getText().toString(), "noType");
+							}
+							
 							listCloud.serialize(Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/cloud/list.json");
 
 							//						Provider provider = ProviderFactory.getProvider(name.getText().toString());
@@ -241,3 +273,4 @@ public class AddLocationStorage extends Activity{
 	}
 
 }
+ 

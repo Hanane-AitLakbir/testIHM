@@ -123,7 +123,8 @@ public class ProviderCloud implements Provider{
 		OAuthConsumer consumer = new DefaultOAuthConsumer(metadata.browse("app_key"),metadata.browse("app_secret"));
 		consumer.setTokenWithSecret(metadata.browse("tokenA"), metadata.browse("tokenS"));
 		Metadata metaPattern = new JSonSerializer(Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/cloud/"+type+"Pattern.json").deserialize();
-
+		long packetSize=0,metadataSize=0;
+		
 		try {
 			//test if "/" is contained in packet.getName() because the folder will not be created in the cloud
 			String simpleName;
@@ -159,16 +160,15 @@ public class ProviderCloud implements Provider{
 			consumer.sign(request);
 			consumer.sign(request2);
 
-			//			System.out.println(request.getRequestProperties().toString());
-			//			System.out.println(request2.getRequestProperties().toString());
-
 			System.out.println("Sending request...");
 
 			DataOutputStream outputStream = new DataOutputStream(request.getOutputStream());
-
-			outputStream.write(packet.getData()); //sends the rest of the file
+			byte[] data = packet.getData();
+			packetSize = (long)data.length; //get the size of the packet
+			outputStream.write(data); //sends the rest of the file
 			System.out.println("Response: " + request.getResponseCode() + " "+ request.getResponseMessage());
 			outputStream.close();
+			
 
 			//File mFile = File.createTempFile("meta", ".tmp");
 			File mFile = new File(Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/file/meta.json");
@@ -177,18 +177,25 @@ public class ProviderCloud implements Provider{
 			DataOutputStream metaStream = new  DataOutputStream(request2.getOutputStream());
 			FileInputStream mFileInput = new FileInputStream(mFile);
 
-			byte[] buffer = new byte[4096];
+			byte[] buffer = new byte[1024];
 			ByteArrayOutputStream ous = new ByteArrayOutputStream();
 			int read = 0;
 			while ( (read = mFileInput.read(buffer)) != -1 ) {
 				ous.write(buffer, 0, read);
 			}
-
+			metadataSize=buffer.length;
+			
 			//metaStream.write(Files.readAllBytes(Paths.get(mFile.getPath()))); //sends the rest of the file
 			metaStream.write(ous.toByteArray()); //sends the rest of the file
 			System.out.println("Response: " + request2.getResponseCode() + " "+ request2.getResponseMessage());
 			metaStream.close();
 			System.out.println("OK");
+			
+			//update metadata : space available
+			long previousAvailableSpace=Long.parseLong(metadata.browse("space"));
+			long newAvailableSpace = previousAvailableSpace-packetSize-metadataSize;
+			metadata.addContent("space", String.valueOf(newAvailableSpace));
+			
 		} catch (MalformedURLException e) {
 			System.out.println("MalformedURLException");
 			throw new CloudNotAvailableException();
