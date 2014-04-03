@@ -22,35 +22,89 @@
         android:layout_below="@+id/textView1"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="22dp"
-        android:orientation="vertical" >
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/nameDetailed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="21dp"
+            android:textColor="#000099" />
+
+        <Button
+            android:id="@+id/deleteDetailed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="21dp"
+            android:text="@string/deleteButton" />
+
+        <Button
+            android:id="@+id/backDetailed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="21dp"
+            android:text="@string/returnButton" />
+
+        <Button
+            android:id="@+id/editDetailed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="21dp"
+            android:text="@string/edit" />
     </LinearLayout>
 
-    <Button
-        android:id="@+id/delete"
+    <LinearLayout
+        android:id="@+id/layout_detailed2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/layout_detailed"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="110dp"
-        android:text="@string/deleteButton" />
+        android:layout_marginTop="22dp"
+        android:orientation="vertical"
+        android:visibility="invisible" >
 
-    <Button
-        android:id="@+id/backDetailed"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/delete"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="21dp"
-        android:text="@string/returnButton" />
-    
-    <Button 
-        android:id="@+id/editDetailed"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/backDetailed"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="21dp"
-        android:text="@string/edit"
-        />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Name" />
+
+        <EditText
+            android:id="@+id/nameEdit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Available storage space" />
+
+        <EditText
+            android:id="@+id/availableSpaceEdit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="number" />
+
+        <RadioGroup
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <RadioButton
+                android:id="@+id/megaByteEdit"
+                android:text="MB" >
+            </RadioButton>
+
+            <RadioButton
+                android:id="@+id/gigaByteEdit"
+                android:text="GB" >
+            </RadioButton>
+        </RadioGroup>
+
+        <Button
+            android:id="@+id/updateDetailed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/update" />
+    </LinearLayout>
 
 </RelativeLayout>

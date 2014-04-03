@@ -192,6 +192,7 @@ public class ProviderCloud implements Provider{
 			System.out.println("OK");
 			
 			//update metadata : space available
+			System.out.println(metadata.browse("space"));
 			long previousAvailableSpace=Long.parseLong(metadata.browse("space"));
 			long newAvailableSpace = previousAvailableSpace-packetSize-metadataSize;
 			metadata.addContent("space", String.valueOf(newAvailableSpace));

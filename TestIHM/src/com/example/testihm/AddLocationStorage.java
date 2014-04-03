@@ -8,9 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
-import android.text.Editable;
 import android.text.InputType;
-import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -53,11 +51,11 @@ public class AddLocationStorage extends Activity{
 				final EditText name=new EditText(getApplicationContext());
 				name.setHint("Please, enter the name");
 				ll.addView(name); 
-				
+
 				TextView tv2 = new TextView(getApplicationContext());
 				tv2.setText("Please, choose a type of cloud");
 				ll.addView(tv2);
-				
+
 				RadioGroup cloudTypeGroup = new RadioGroup(getApplicationContext());
 				cloudTypeGroup.setOrientation(LinearLayout.HORIZONTAL);
 				final RadioButton dropboxType = new RadioButton(getApplicationContext());
@@ -98,16 +96,16 @@ public class AddLocationStorage extends Activity{
 				final EditText appSecret=new EditText(getApplicationContext());
 				appSecret.setHint("Enter the app secret");
 				ll.addView(appSecret);
-				
+
 				TextView tv5= new TextView(getApplicationContext());
 				tv5.setText("Available storage space");
 				ll.addView(tv5);
-				
+
 				final EditText availableSpace = new EditText(getApplicationContext());
 				availableSpace.setHint("Enter a number");
 				availableSpace.setInputType(InputType.TYPE_CLASS_NUMBER);
 				ll.addView(availableSpace);
-				
+
 				RadioGroup unitSpace = new RadioGroup(getApplicationContext());
 				unitSpace.setOrientation(LinearLayout.HORIZONTAL);
 				final RadioButton megaByte = new RadioButton(getApplicationContext());
@@ -117,7 +115,7 @@ public class AddLocationStorage extends Activity{
 				unitSpace.addView(megaByte);
 				unitSpace.addView(gigaByte);
 				ll.addView(unitSpace);
-				
+
 				//				webView = new WebView(getApplicationContext());
 				//				LayoutParams params = new LayoutParams(10000,400);
 				//				params.setMargins(10, 30, 10, 10);
@@ -164,7 +162,7 @@ public class AddLocationStorage extends Activity{
 							}else{
 								listCloud.addContent(name.getText().toString(), "noType");
 							}
-							
+
 							listCloud.serialize(Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/cloud/list.json");
 
 							//						Provider provider = ProviderFactory.getProvider(name.getText().toString());
@@ -273,4 +271,3 @@ public class AddLocationStorage extends Activity{
 	}
 
 }
- 

@@ -13,17 +13,19 @@
     <string name="title_activity_options_fragment">OptionsFragment</string>
     <string name="title_activity_add_location_storage">Ajouter un emplacement de stockage</string>
     <string name="title_activity_detailed_location_storage">Détails</string>
-	<string name="add_storage_location">Ajouter un nouvel emplacement de stockage</string>
-	<string name="returnButton">Retour</string>
-	<string name="online_cloud">Cloud en ligne</string>
-	<string name="webdav_server">Serveur webdav</string>
-	<string name="instruction_typeChoice">Choississez le type de serveur</string>
-	<string name="detailed_information">Informations détaillées</string>
-	<string name="deleteButton">Supprimer</string>
-	<string name="downloadButton">Télécharger un fichier </string>
-	<string name="uploadButton">Charger un fichier</string>
-	<string name="messageChoiceNbPackets">Combien de paquets voulez-vous créer ?</string>
-	<string name="alert_message_add_location_storage">Veuillez entrer un nom de cloud valide</string>
-	<string name="alert_title_add_location_storage">Nom de cloud invalide</string>
-	  <string name="edit">Edition</string>
+    <string name="add_storage_location">Ajouter un nouvel emplacement de stockage</string>
+    <string name="returnButton">Retour</string>
+    <string name="online_cloud">Cloud en ligne</string>
+    <string name="webdav_server">Serveur webdav</string>
+    <string name="instruction_typeChoice">Choississez le type de serveur</string>
+    <string name="detailed_information">Informations détaillées</string>
+    <string name="deleteButton">Supprimer</string>
+    <string name="downloadButton">Télécharger un fichier </string>
+    <string name="uploadButton">Charger un fichier</string>
+    <string name="messageChoiceNbPackets">Combien de paquets voulez-vous créer ?</string>
+    <string name="alert_message_add_location_storage">Veuillez entrer un nom de cloud valide</string>
+    <string name="alert_title_add_location_storage">Nom de cloud invalide</string>
+    <string name="edit">Edition</string>
+    <string name="update">Mettre à jour</string>
+
 </resources>

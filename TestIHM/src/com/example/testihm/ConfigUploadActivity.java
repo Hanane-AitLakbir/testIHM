@@ -10,12 +10,7 @@ import metadata.Metadata;
 import allocation.AllocationStrategy;
 import allocation.ChosenCloud;
 import allocation.InvalidParameterException;
-import coding.Coder;
-import coding.EmptyCoder;
 import android.app.Activity;
-import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.Menu;
@@ -29,6 +24,8 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import coding.Coder;
+import coding.EmptyCoder;
 
 
 public class ConfigUploadActivity extends Activity {
@@ -207,8 +204,7 @@ public class ConfigUploadActivity extends Activity {
 				//progress.dismiss();
 				Toast.makeText(getApplicationContext(), "uploading is succesful", Toast.LENGTH_LONG).show();
 
-				Intent intent = new Intent(ConfigUploadActivity.this,UploadActivity.class);
-				startActivity(intent);
+				finish();
 			}
 		});
 

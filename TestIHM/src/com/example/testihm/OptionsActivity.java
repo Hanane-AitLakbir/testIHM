@@ -182,8 +182,7 @@ public class OptionsActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				Intent intent = new Intent(getApplicationContext(),MainActivity.class);
-				startActivity(intent);
+				finish();
 			}
 		});
 
@@ -197,5 +196,53 @@ public class OptionsActivity extends Activity {
 		return true;
 	}
 
+	public void onResume(){
+		super.onResume();
+		
+		final LinearLayout ll = (LinearLayout) findViewById(R.id.parentLayout);
+
+		ll.removeAllViews();
+		ListView listView = new ListView(getApplicationContext());
+		ll.addView(listView);
+
+		ArrayList<HashMap<String, String>> values = new ArrayList<HashMap<String,String>>();
+		String current;
+		Metadata metadataListCloud = new JSonSerializer(Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/cloud/list.json").deserialize();
+		HashMap<String, String> map = metadataListCloud.getMap();
+		Iterator<String> iterator = map.keySet().iterator();
+
+		HashMap<String, String> map2;
+		while(iterator.hasNext()){
+			map2 = new HashMap<String, String>();
+			current = iterator.next().toString();
+			map2.put("nameCloud",current);
+			map2.put("type", map.get(current));
+			values.add(map2);
+		}
+
+		ListAdapter adapter = new SimpleAdapter(getApplicationContext(), values, R.layout.list_clouds, new String[] {"nameCloud","type"}, new int[] {R.id.nameCloud,R.id.type});
+		listView.setAdapter(adapter);
+
+		listView.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parents, View view, int position, long id) {
+				//WORKING
+				String selectedItem = parents.getItemAtPosition(position).toString();
+				String delims = "[ ,{}=]+";
+				String[] words = selectedItem.split(delims); //Be careful: it begins with "" because selectedItem begins with the delimiter "{"
+				System.out.println(Arrays.toString(words));
+				String path ="click "+ parents.getItemAtPosition(position).toString();
+				Toast toast = Toast.makeText(getApplicationContext(), path, Toast.LENGTH_SHORT);
+				toast.show();
+
+				System.out.println(words[4]);
+				Intent intent = new Intent(getApplicationContext(), DetailedLocationStorage.class);
+				intent.putExtra("name",words[4]);
+				intent.putExtra("type", words[2]);
+				startActivity(intent);
+			}
+		});
+	}
 
 }

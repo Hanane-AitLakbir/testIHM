@@ -4,11 +4,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.example.testihm.R;
-
 import utilities.Packet;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
@@ -120,8 +117,7 @@ public class UploadActivity extends Activity {
 			
 			@Override
 			public void onClick(View arg0) {
-				Intent intent = new Intent(UploadActivity.this, MainActivity.class);
-				startActivity(intent);
+				finish();
 			}
 		});
 	}

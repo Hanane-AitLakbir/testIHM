@@ -12,7 +12,6 @@ import utilities.Packet;
 import allocation.AllocationStrategy;
 import allocation.ChosenCloud;
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.Menu;
@@ -100,8 +99,7 @@ public class DownloadActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				Intent intent = new Intent(DownloadActivity.this,MainActivity.class);
-				startActivity(intent);
+				finish();
 				
 			}
 		});
