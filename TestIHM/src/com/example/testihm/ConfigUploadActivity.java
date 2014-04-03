@@ -30,7 +30,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-//TODO check inputNbPacket (if user don't enter anything)
+
 public class ConfigUploadActivity extends Activity {
 
 	String fileToUpload;
@@ -42,33 +42,33 @@ public class ConfigUploadActivity extends Activity {
 	//ProgressDialog progress;
 
 
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_config_upload);
 		//context=this;
-		
+
 		Bundle bundle = getIntent().getExtras();
 		if(bundle!=null){
 			fileToUpload = bundle.getString("fileToUpload");
 		}
-		
+
 		TextView displayFileName = (TextView) findViewById(R.id.name_fileToUpload);
 		displayFileName.setText(fileToUpload);;
-		
+
 		LinearLayout layout = (LinearLayout) findViewById(R.id.layout_config_upload);
-		
+
 		Metadata metaCloud = new JSonSerializer(Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/cloud/list.json").deserialize();
 		Set<String> listCloud = metaCloud.getMap().keySet();
-		
+
 		for(String c : listCloud){
 			//populate the layout with one check box for each available storage location
 			CheckBox checkbox = new CheckBox(getApplicationContext());
 			checkbox.setText(c);
 			//add the listener
 			checkbox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-				
+
 				@Override
 				public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 					//populate the arrayList of the chosen clouds 
@@ -81,14 +81,14 @@ public class ConfigUploadActivity extends Activity {
 			});
 			layout.addView(checkbox);
 		}
-		
+
 		//TODO add the choice of allocationStrategy
-		
-		
+
+
 		//send button : creation an allocationStrategy object
 		Button send = (Button) findViewById(R.id.buttonSendFile);
 		send.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View arg0) {
 				//Toast.makeText(getApplicationContext(), chosenCloudsList.toString(), Toast.LENGTH_SHORT).show();
@@ -98,13 +98,13 @@ public class ConfigUploadActivity extends Activity {
 				//Toast.makeText(getApplicationContext(), "Please wait. \nWe (actually I am alone...) are uploading the file ...", Toast.LENGTH_LONG).show();
 				EditText inputNbPacket = (EditText) findViewById(R.id.inputChoiceNbPackets);
 				System.out.println("$"+inputNbPacket.getText().toString()+"$");
-				if(inputNbPacket.getText().toString()!=""){
+				if(inputNbPacket.getText().toString().length()!=0){
 					nbPackets=Integer.parseInt(inputNbPacket.getText().toString());
 				}
 				System.out.println(nbPackets);
 				Coder coder = new EmptyCoder();
 				AllocationStrategy strategy = new ChosenCloud();
-				
+
 				String[] clouds = new String[chosenCloudsList.size()];
 				int i=0;
 				for(String c : chosenCloudsList){
@@ -112,7 +112,7 @@ public class ConfigUploadActivity extends Activity {
 					i++;
 				}
 				System.out.println(clouds.toString());
-				
+
 				try {
 					strategy.upLoad(fileToUpload, nbPackets,clouds, coder);
 					//System.out.println("boolean Config Upload :"+finished);
@@ -205,15 +205,15 @@ public class ConfigUploadActivity extends Activity {
 				//				}
 
 				//progress.dismiss();
-				Toast.makeText(getApplicationContext(), "uploading is a success", Toast.LENGTH_LONG).show();
+				Toast.makeText(getApplicationContext(), "uploading is succesful", Toast.LENGTH_LONG).show();
 
 				Intent intent = new Intent(ConfigUploadActivity.this,UploadActivity.class);
 				startActivity(intent);
 			}
 		});
-	
-		
-		
+
+
+
 	}
 
 	@Override

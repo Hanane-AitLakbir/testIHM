@@ -23,4 +23,6 @@
 	<string name="downloadButton">Télécharger un fichier </string>
 	<string name="uploadButton">Charger un fichier</string>
 	<string name="messageChoiceNbPackets">Combien de paquets voulez-vous créer ?</string>
+	<string name="alert_message_add_location_storage">Veuillez entrer un nom de cloud valide</string>
+	<string name="alert_title_add_location_storage">Nom de cloud invalide</string>
 </resources>
