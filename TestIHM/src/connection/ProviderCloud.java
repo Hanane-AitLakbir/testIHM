@@ -73,46 +73,46 @@ public class ProviderCloud implements Provider{
 		Metadata metadata = new JSonSerializer(Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/cloud/"+nameCloud+".json").deserialize();
 		//launch connection request only if the tokens are empty (ie first connection) 
 		//if(metadata.browse("TokenS")==null || metadata.browse("TokenA")==null){
-			OAuthConsumer consumer = new DefaultOAuthConsumer(metadata.browse("app_key"), metadata.browse("app_secret"));
+		OAuthConsumer consumer = new DefaultOAuthConsumer(metadata.browse("app_key"), metadata.browse("app_secret"));
 		Metadata metaPattern = new JSonSerializer(Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/cloud/"+type+"Pattern.json").deserialize();
 
-			OAuthProvider provider = new DefaultOAuthProvider(
+		OAuthProvider provider = new DefaultOAuthProvider(
 				metaPattern.browse("requestToken"),
 				metaPattern.browse("accessToken"),
 				metaPattern.browse("authorize"));
 
-			System.out.println("Fetching request token...");
+		System.out.println("Fetching request token...");
 
-			String authUrl;
+		String authUrl;
 
-			try {
-				authUrl = provider.retrieveRequestToken(consumer, "");
-				System.out.println("Now visit:\n" + authUrl + "\n... and grant this app authorization");
-				//java.awt.Desktop.getDesktop().browse(java.net.URI.create(authUrl)); //to open the web browser and the website page ;p
-				//add opening of the web browser in Android  
+		try {
+			authUrl = provider.retrieveRequestToken(consumer, "");
+			System.out.println("Now visit:\n" + authUrl + "\n... and grant this app authorization");
+			//java.awt.Desktop.getDesktop().browse(java.net.URI.create(authUrl)); //to open the web browser and the website page ;p
+			//add opening of the web browser in Android  
 			//if(webBrowserOpener!=null) webBrowserOpener.openWebBrowser(authUrl);
 
-				System.out.println("Hit ENTER when you're done:");
+			System.out.println("Hit ENTER when you're done:");
 			//while(!connected){}
 
 			String verificationCode = "";
 
-				System.out.println("Fetching access token...");
+			System.out.println("Fetching access token...");
 
-				provider.retrieveAccessToken(consumer, verificationCode.trim());
-				metadata.addContent("tokenA", consumer.getToken());
-				metadata.addContent("tokenS", consumer.getTokenSecret());
-				metadata.serialize(Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/cloud/"+nameCloud+".json");
+			provider.retrieveAccessToken(consumer, verificationCode.trim());
+			metadata.addContent("tokenA", consumer.getToken());
+			metadata.addContent("tokenS", consumer.getTokenSecret());
+			metadata.serialize(Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/cloud/"+nameCloud+".json");
 
-			} catch (OAuthMessageSignerException e) {
-				throw new CloudNotAvailableException();
-			} catch (OAuthNotAuthorizedException e) {
-				throw new CloudNotAvailableException();
-			} catch (OAuthExpectationFailedException e) {
-				throw new CloudNotAvailableException();
-			} catch (OAuthCommunicationException e) {
-				throw new CloudNotAvailableException();
-			}
+		} catch (OAuthMessageSignerException e) {
+			throw new CloudNotAvailableException();
+		} catch (OAuthNotAuthorizedException e) {
+			throw new CloudNotAvailableException();
+		} catch (OAuthExpectationFailedException e) {
+			throw new CloudNotAvailableException();
+		} catch (OAuthCommunicationException e) {
+			throw new CloudNotAvailableException();
+		}
 
 	}
 
@@ -124,7 +124,7 @@ public class ProviderCloud implements Provider{
 		consumer.setTokenWithSecret(metadata.browse("tokenA"), metadata.browse("tokenS"));
 		Metadata metaPattern = new JSonSerializer(Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/cloud/"+type+"Pattern.json").deserialize();
 		long packetSize=0,metadataSize=0;
-		
+
 		try {
 			//test if "/" is contained in packet.getName() because the folder will not be created in the cloud
 			String simpleName;
@@ -134,7 +134,7 @@ public class ProviderCloud implements Provider{
 				simpleName=packet.getName();
 			}
 			System.out.println("simple name "+simpleName);
-			
+
 			System.out.println(metaPattern==null);
 			url = new URL(metaPattern.browse("upload")+ simpleName+"?param=UTF-8");
 			url2 = new URL(metaPattern.browse("upload")+ simpleName+".json?param=UTF-8");
@@ -168,12 +168,12 @@ public class ProviderCloud implements Provider{
 			outputStream.write(data); //sends the rest of the file
 			System.out.println("Response: " + request.getResponseCode() + " "+ request.getResponseMessage());
 			outputStream.close();
-			
+
 
 			//File mFile = File.createTempFile("meta", ".tmp");
 			File mFile = new File(Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/file/meta.json");
 			packet.getMetadata().serialize(mFile.getPath());
-			
+
 			DataOutputStream metaStream = new  DataOutputStream(request2.getOutputStream());
 			FileInputStream mFileInput = new FileInputStream(mFile);
 
@@ -184,19 +184,19 @@ public class ProviderCloud implements Provider{
 				ous.write(buffer, 0, read);
 			}
 			metadataSize=buffer.length;
-			
+
 			//metaStream.write(Files.readAllBytes(Paths.get(mFile.getPath()))); //sends the rest of the file
 			metaStream.write(ous.toByteArray()); //sends the rest of the file
 			System.out.println("Response: " + request2.getResponseCode() + " "+ request2.getResponseMessage());
 			metaStream.close();
 			System.out.println("OK");
-			
+
 			//update metadata : space available
 			System.out.println(metadata.browse("space"));
 			long previousAvailableSpace=Long.parseLong(metadata.browse("space"));
 			long newAvailableSpace = previousAvailableSpace-packetSize-metadataSize;
 			metadata.addContent("space", String.valueOf(newAvailableSpace));
-			
+
 		} catch (MalformedURLException e) {
 			System.out.println("MalformedURLException");
 			throw new CloudNotAvailableException();
@@ -235,8 +235,8 @@ public class ProviderCloud implements Provider{
 			OAuthConsumer consumer = new DefaultOAuthConsumer(metadata.browse("app_key"),metadata.browse("app_secret"));
 			consumer.setTokenWithSecret(metadata.browse("tokenA"), metadata.browse("tokenS"));
 
-			request.setDoOutput(true);
-			request2.setDoOutput(true);
+			request.setDoInput(true);
+			request2.setDoInput(true);
 
 			request.setRequestMethod("GET");
 			request.addRequestProperty("rev", "");
@@ -246,13 +246,27 @@ public class ProviderCloud implements Provider{
 
 			consumer.sign(request);
 			consumer.sign(request2);
+
 			System.out.println("Sending request...");
+
 			request.connect();
 			request2.connect();
-			
+			System.out.println("Connect ok...");
+
+			System.out.println("Response: " + request.getResponseCode() + " "
+					+ request.getResponseMessage());
+
+			//			InputStreamReader readerError = new InputStreamReader(request.getErrorStream());
+			//			BufferedReader bufferError = new BufferedReader(readerError);
+			//			String line;
+			//			while((line=bufferError.readLine())!=null){
+			//				System.out.println(line);	
+			//			}
+
 			DataInputStream inputStream = new DataInputStream(request.getInputStream());
 			DataInputStream metaStream = new DataInputStream(request2.getInputStream());
-			
+			System.out.println("inputStream created ok...");
+
 			packet = new Packet(name,toByteArray(inputStream));
 			packet.setMetadata(new JSonSerializer().deserializeStream(metaStream));
 
@@ -260,20 +274,33 @@ public class ProviderCloud implements Provider{
 					+ request.getResponseMessage());
 
 		} catch (MalformedURLException e) {
+			System.out.println("MalformedURLException");
 			throw new CloudNotAvailableException();
+
 		} catch (ProtocolException e) {
+			System.out.println("ProtocolException");
 			throw new CloudNotAvailableException();
+
 		} catch (OAuthMessageSignerException e) {
+			System.out.println("OAuthMessageSignerException");
 			throw new CloudNotAvailableException();
+
 		} catch (OAuthExpectationFailedException e) {
+			System.out.println("OAuthExpectationFailedException");
 			throw new CloudNotAvailableException();
+
 		} catch (OAuthCommunicationException e) {
+			System.out.println("OAuthCommunicationException");
 			throw new CloudNotAvailableException();
-		} catch (IOException e) {
+
+		}
+		catch (IOException e) {
+			System.out.println("IOException");
 			throw new CloudNotAvailableException();
+
 		}
 
-
+		//System.out.println("ProviderCloud : " + packet.getData().length);
 		return packet;
 	}
 
