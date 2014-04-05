@@ -68,7 +68,7 @@ public class ChosenCloud implements AllocationStrategy{
 		metadata.serialize(Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/file/"+name+".json");
 		Metadata filesMetadata = new JSonSerializer(Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/file/files List.json").deserialize();
 		filesMetadata.addContent(name, "");
-		filesMetadata.serialize(Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/files List.json");
+		filesMetadata.serialize(Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/file/files List.json");
 		return true;
 	}
 

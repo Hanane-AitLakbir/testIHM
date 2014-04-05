@@ -60,7 +60,7 @@ public class DownloadActivity extends Activity {
 		//populate the listvew with the name of files stored onto clouds
 		ArrayList<String> values = new ArrayList<String>();
 		
-		Metadata metadataListCloud = new JSonSerializer(Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/files List.json").deserialize();
+		Metadata metadataListCloud = new JSonSerializer(Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/file/files List.json").deserialize();
 		HashMap<String, String> map = metadataListCloud.getMap();
 		Iterator<String> iterator = map.keySet().iterator();
 
