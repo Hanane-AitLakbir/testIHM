@@ -107,18 +107,21 @@ public class ChosenCloud implements AllocationStrategy{
 		//Downloading the packets
 		String simpleName = fileName.substring(0, fileName.lastIndexOf(".")); // 0 for start index missed in parameters
 		int providerIndex;
+		int[] indexDownloadedPackets = new int[nbrOfPackets];
+		
 		for(int i=0; i<nbrOfPackets; i++){
 			try {
 				providerIndex = clouds.indexOf(packetsToClouds.get(i));
 				if(providerIndex>=0){
 					packets[i] = providers[providerIndex].download(simpleName+"_"+i+fileName.substring(fileName.lastIndexOf(".")));
 				}
+				indexDownloadedPackets[i] = i;
 			} catch (CloudNotAvailableException e) {
 				e.printStackTrace();
 			}
 		}
 
-		Packet[] decodedPackets = coder.decode(packets);
+		Packet[] decodedPackets = coder.decode(packets, indexDownloadedPackets);
 		File file = Merger.merge(directory+"/"+fileName, decodedPackets);
 		return checksum.equals(ComputeChecksum.getChecksum(file));
 	}

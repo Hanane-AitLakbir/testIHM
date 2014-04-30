@@ -10,7 +10,7 @@ public class EmptyCoder implements Coder {
 	}
 
 	@Override
-	public Packet[] decode(Packet[] packets) {
+	public Packet[] decode(Packet[] packets, int[] index) {
 		return packets;
 	}
 
