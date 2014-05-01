@@ -23,6 +23,8 @@ import android.widget.Toast;
 import connection.CloudNotAvailableException;
 import connection.Provider;
 import connection.ProviderCloud;
+import connection.ProviderFactory;
+import connection.ProviderWebdav;
 
 public class UploadActivity extends Activity {
 
@@ -47,7 +49,8 @@ public class UploadActivity extends Activity {
 			public void onClick(View arg0) {
 				byte[] data = "Aujourd'hui il fait beau".getBytes();
 				Packet packet = new Packet("YouGonnaToWorkF__kingAndroid2.txt", data);
-				Provider provider = new ProviderCloud("dropbox","dropbox");
+				//Provider provider = new ProviderCloud("dropbox","dropbox");
+				Provider provider = ProviderFactory.getProvider("account1");
 				try {
 					provider.upload(packet);
 					//System.out.println("packet uploaded");

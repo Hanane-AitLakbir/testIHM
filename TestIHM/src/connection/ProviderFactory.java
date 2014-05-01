@@ -15,6 +15,14 @@ public class ProviderFactory {
 			Provider provider =  new ProviderCloud(name,"dropbox");
 			//provider.connect();
 			return provider;
+		}else if(meta.browse(name).equals("webdav")){
+			Provider provider = new ProviderWebdav(name);
+			try {
+				provider.connect(null);
+				return provider;
+			} catch (CloudNotAvailableException e) {
+				e.printStackTrace();
+			}
 		}
 		return null;
 		

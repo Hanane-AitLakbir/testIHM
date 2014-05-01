@@ -253,8 +253,7 @@ public class AddLocationStorage extends Activity{
 
 						Toast.makeText(getApplicationContext(), "metadata created", Toast.LENGTH_LONG).show();
 
-						Intent intent = new Intent(AddLocationStorage.this, OptionsActivity.class);
-						startActivity(intent);
+						finish();
 
 					}
 				});

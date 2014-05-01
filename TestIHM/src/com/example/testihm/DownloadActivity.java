@@ -28,7 +28,10 @@ import android.widget.Toast;
 import coding.Coder;
 import coding.EmptyCoder;
 import connection.CloudNotAvailableException;
+import connection.Provider;
 import connection.ProviderCloud;
+import connection.ProviderFactory;
+import connection.ProviderWebdav;
 
 public class DownloadActivity extends Activity {
 
@@ -42,7 +45,8 @@ public class DownloadActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				ProviderCloud provider = new ProviderCloud("dropbox","dropbox");
+				//ProviderCloud provider = new ProviderCloud("dropbox","dropbox");
+				Provider provider = ProviderFactory.getProvider("account1");
 				Packet packet;
 				try {
 					packet = provider.download("2032.txt");
@@ -89,7 +93,7 @@ public class DownloadActivity extends Activity {
 					e.printStackTrace();
 				}
 				
-				Toast.makeText(getApplicationContext(), "Download succesful", Toast.LENGTH_SHORT).show();
+				Toast.makeText(getApplicationContext(), "Download was successful", Toast.LENGTH_SHORT).show();
 			}
 		});
 		
