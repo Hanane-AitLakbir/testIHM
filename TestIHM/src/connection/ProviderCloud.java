@@ -319,6 +319,9 @@ public class ProviderCloud implements Provider{
 	 * Nota : if folder exists, if you call folder/subfolder, the folder "subfolder" will be created in "folder"
 	 */
 	public void createFolder(String nameFolder){
+		
+		String safeName = nameFolder.replaceAll("/", "_").replaceAll(" ", "_").replace("\\", "_");
+		
 		Metadata metadata = new JSonSerializer(Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/cloud/"+nameCloud+".json").deserialize();
 		OAuthConsumer consumer = new DefaultOAuthConsumer(metadata.browse("app_key"),metadata.browse("app_secret"));
 		consumer.setTokenWithSecret(metadata.browse("tokenA"), metadata.browse("tokenS"));
@@ -326,7 +329,7 @@ public class ProviderCloud implements Provider{
 
 		URL url;
 		try {
-			url = new URL(metaPattern.browse("create_folder")+nameFolder);
+			url = new URL(metaPattern.browse("create_folder")+safeName);
 			HttpURLConnection request = (HttpURLConnection) url.openConnection();
 
 			request.setDoOutput(true);
