@@ -31,5 +31,5 @@
     <string name="edit">Edit</string>
     <string name="update">Update</string>
     <string name="messageSending"> In Progress. Please wait...</string>
-
+    <string name="messageDownloading"> In Progress. Please wait...</string>
 </resources>

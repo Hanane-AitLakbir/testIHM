@@ -28,5 +28,6 @@
     <string name="edit">Edition</string>
     <string name="update">Mettre à jour</string>
     <string name="messageSending"> Envoi en cours...</string>
+    <string name="messageDownloading"> Réception en cours...</string>
 
 </resources>
