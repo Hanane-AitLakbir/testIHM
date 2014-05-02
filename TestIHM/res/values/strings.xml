@@ -30,5 +30,6 @@
     <string name="alert_title_add_location_storage">Invalid cloud name</string>
     <string name="edit">Edit</string>
     <string name="update">Update</string>
+    <string name="messageSending"> In Progress. Please wait...</string>
 
 </resources>

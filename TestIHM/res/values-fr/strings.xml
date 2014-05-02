@@ -27,5 +27,6 @@
     <string name="alert_title_add_location_storage">Nom de cloud invalide</string>
     <string name="edit">Edition</string>
     <string name="update">Mettre à jour</string>
+    <string name="messageSending"> Envoi en cours...</string>
 
 </resources>
