@@ -89,7 +89,6 @@ public class ConfigUploadActivity extends Activity {
 					
 					@Override
 					public void run() {
-						// TODO Auto-generated method stub
 						EditText inputNbPacket = (EditText) findViewById(R.id.inputChoiceNbPackets);
 						System.out.println("$"+inputNbPacket.getText().toString()+"$");
 						if(inputNbPacket.getText().toString().length()!=0){

@@ -313,4 +313,42 @@ public class ProviderCloud implements Provider{
 		}
 		return baos.toByteArray();
 	}
+
+	/**
+	 * Creates a folder in the root "dropbox". If the folder with the same name exists, the method will do nothing.
+	 * Nota : if folder exists, if you call folder/subfolder, the folder "subfolder" will be created in "folder"
+	 */
+	public void createFolder(String nameFolder){
+		Metadata metadata = new JSonSerializer(Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/cloud/"+nameCloud+".json").deserialize();
+		OAuthConsumer consumer = new DefaultOAuthConsumer(metadata.browse("app_key"),metadata.browse("app_secret"));
+		consumer.setTokenWithSecret(metadata.browse("tokenA"), metadata.browse("tokenS"));
+		Metadata metaPattern = new JSonSerializer(Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/cloud/"+type+"Pattern.json").deserialize();
+
+		URL url;
+		try {
+			url = new URL(metaPattern.browse("create_folder")+nameFolder);
+			HttpURLConnection request = (HttpURLConnection) url.openConnection();
+
+			request.setDoOutput(true);
+
+			request.setRequestMethod("POST");
+
+			consumer.sign(request);
+			request.connect();
+			System.out.println("Response: " + request.getResponseCode() + " "+ request.getResponseMessage());
+			
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (ProtocolException e) {
+			e.printStackTrace();
+		} catch (OAuthMessageSignerException e) {
+			e.printStackTrace();
+		} catch (OAuthExpectationFailedException e) {
+			e.printStackTrace();
+		} catch (OAuthCommunicationException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 }
