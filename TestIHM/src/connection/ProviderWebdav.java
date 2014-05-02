@@ -66,17 +66,18 @@ public class ProviderWebdav implements Provider {
 		}
 		
 		PutMethod upload = new PutMethod(metadata.browse("URLServer")+"/remote.php/webdav/" + simpleName);
-		System.out.println("ok");
 		PutMethod uploadMeta = new PutMethod(metadata.browse("URLServer")+"/remote.php/webdav/" + simpleName+".json");
+		System.out.println("ok put method");
 		File f;
 		try {
 			mFile = new File(Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/file/meta.json");
 			packet.getMetadata().serialize(mFile.getPath());
 //			mFile = File.createTempFile("meta", ".tmp");
-			f = File.createTempFile(packet.getName(), ".tmp");
+			f = new File(Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/file/temp"+packet.getExtension());
 //			meta.serialize(mFile.getPath());
 			
 			FileOutputStream output = new FileOutputStream(f);
+			System.out.println("ok output stream");
 			
 			output.write(packet.getData());
 			output.close();
@@ -95,9 +96,10 @@ public class ProviderWebdav implements Provider {
 				System.out.println(uploadMeta.getStatusCode() + " "+ uploadMeta.getStatusText());
 				uploadMeta.releaseConnection();
 			}
-			
+			f.delete();
 			
 		} catch (IOException e1) {
+			System.out.println("problem upload");
 			throw new CloudNotAvailableException();
 		}
 
