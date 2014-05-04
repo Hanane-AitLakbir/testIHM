@@ -5,7 +5,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.TreeMap;
 
 import metadata.JSonSerializer;
 import metadata.Metadata;
@@ -22,10 +21,11 @@ import org.apache.commons.httpclient.methods.FileRequestEntity;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
+import org.apache.jackrabbit.webdav.client.methods.MkColMethod;
 import org.apache.jackrabbit.webdav.client.methods.PutMethod;
 
-import android.os.Environment;
 import utilities.Packet;
+import android.os.Environment;
 
 public class ProviderWebdav implements Provider {
 
@@ -160,7 +160,16 @@ public class ProviderWebdav implements Provider {
 
 	@Override
 	public void createFolder(String nameFolder) {
-		// TODO Auto-generated method stub
+		String safeName = nameFolder.replaceAll("/", "_").replaceAll(" ", "_").replace("\\", "_");
+		Metadata metadata = new JSonSerializer(Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/cloud/"+serverName+".json").deserialize();
+		MkColMethod uploadFolder = new MkColMethod(metadata.browse("URLServer")+safeName);
+		try {
+			client.executeMethod(uploadFolder);
+		} catch (HttpException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
 	}
 }
