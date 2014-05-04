@@ -133,9 +133,9 @@ public class ProviderCloud implements Provider{
 			}else{
 				simpleName=packet.getName();
 			}
-			System.out.println("simple name "+simpleName);
+			//System.out.println("simple name "+simpleName);
 
-			System.out.println(metaPattern==null);
+			//System.out.println(metaPattern==null);
 			url = new URL(metaPattern.browse("upload")+ simpleName+"?param=UTF-8");
 			url2 = new URL(metaPattern.browse("upload")+ simpleName+".json?param=UTF-8");
 
