@@ -12,6 +12,7 @@ public class Packet {
 		this.name = name;
 		this.data = data;
 	}
+	
 	public Metadata getMetadata() {
 		if(metadata!=null){
 			return metadata;
@@ -38,7 +39,9 @@ public class Packet {
 	public String getName() {
 		return name;
 	}
-
+	public void setName(String newName){
+		name = newName;
+	}
 	public String getExtension(){
 		return name.substring(name.lastIndexOf(".")+1);
 	}

@@ -14,4 +14,9 @@ public class EmptyCoder implements Coder {
 		return packets;
 	}
 
+	@Override
+	public String getName() {
+		return "empty";
+	}
+
 }

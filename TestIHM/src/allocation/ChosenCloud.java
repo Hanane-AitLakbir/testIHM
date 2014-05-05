@@ -1,6 +1,8 @@
 package allocation;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -39,29 +41,57 @@ public class ChosenCloud implements AllocationStrategy{
 		Packet[] splittedPackets = Splitter.split(fileName, nbrOfPackets);
 		
 		Packet[] codedPackets = coder.encode(splittedPackets);
+		//Rename packets
+		for(int i=0; i<codedPackets.length; i++){
+			codedPackets[i].setName(coder.getName()+"_"+i+"."+codedPackets[i].getExtension());
+		}
+		System.out.println("Packets renamed");
 		
 		int nbrOfClouds = clouds.length;
 		Provider[] providers = new Provider[nbrOfClouds];
-		for(int i=0; i<nbrOfClouds; i++){
-			providers[i] = ProviderFactory.getProvider(clouds[i]);
-			System.out.println(i+" ok "+ (providers[i]==null));
+		Metadata[] metadatas = new Metadata[nbrOfClouds];
+		int j = 0;
+		while(j<nbrOfClouds){
+			providers[j] = ProviderFactory.getProvider(clouds[j]);
+			System.out.println(j+" ok "+ (providers[j]==null));
+			if(providers[j]!=null){
+				try {
+					metadatas[j] = new JSonSerializer().deserializeStream(new ByteArrayInputStream(providers[j].download("list.json").getData()));
+					System.out.println(clouds[j]+" : metadata files downloaded");
+					j++;
+				} catch (CloudNotAvailableException e) {
+					clouds[j] = askForCloud();
+				}
+			}
 		}
 		System.out.println("getProviders OK");
 		int i=0;
-		metadata.addContent("name", fileName);
-		metadata.addContent("checksum", ComputeChecksum.getChecksum(new File(fileName)));
-		metadata.addContent("number of packets", ""+codedPackets.length);
-		System.out.println("meta OK");
+//		metadata.addContent("name", fileName);
+//		metadata.addContent("checksum", ComputeChecksum.getChecksum(new File(fileName)));
+//		metadata.addContent("number of packets", ""+codedPackets.length);
+//		System.out.println("meta OK");
+		String checksum = ComputeChecksum.getChecksum(new File(fileName));
 		
 		while(i<codedPackets.length){
 			System.out.println("chosenCloud "+clouds[i%nbrOfClouds]);
 			try {
+				// Create the folder in the cloud with the name : fileName@checksum
+				providers[i%nbrOfClouds].createFolder(fileName+"@"+checksum);
+				// Update the metadata
+				if(metadatas[i%nbrOfClouds].browse(fileName)==null){
+					metadatas[i%nbrOfClouds].addContent(fileName, checksum);
+					//TODO upload the metadata
+				}
 				providers[i%nbrOfClouds].upload(codedPackets[i]);
-				metadata.addContent("cloud"+i, clouds[i%nbrOfClouds]);
+				//metadata.addContent("cloud"+i, clouds[i%nbrOfClouds]);
 				i++;
 			} catch (CloudNotAvailableException e) {
 				clouds[i%nbrOfClouds] = askForCloud();
 				providers[i%nbrOfClouds] = ProviderFactory.getProvider(clouds[i%nbrOfClouds]);
+				try {
+					metadatas[i%nbrOfClouds] = new JSonSerializer().deserializeStream(new ByteArrayInputStream(providers[i%nbrOfClouds].download("list.json").getData()));
+					System.out.println(clouds[i%nbrOfClouds]+" : metadata files downloaded");
+				} catch (CloudNotAvailableException ex) {}
 			}
 		}
 		String name = fileName.substring(fileName.lastIndexOf("/")+1); //fileName gets the name of the folder and +1 to remove the slash
