@@ -1,12 +1,14 @@
 package connection;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -127,12 +129,12 @@ public class ProviderCloud implements Provider{
 
 		try {
 			//test if "/" is contained in packet.getName() because the folder will not be created in the cloud
-			String simpleName;
-			if(packet.getName().contains("/")){
-				simpleName=packet.getName().substring(packet.getName().lastIndexOf("/")+1);
-			}else{
-				simpleName=packet.getName();
-			}
+			String simpleName=packet.getName();
+//			if(packet.getName().contains("/")){
+//				simpleName=packet.getName().substring(packet.getName().lastIndexOf("/")+1);
+//			}else{
+//				simpleName=packet.getName();
+//			}
 			//System.out.println("simple name "+simpleName);
 
 			//System.out.println(metaPattern==null);
@@ -319,16 +321,39 @@ public class ProviderCloud implements Provider{
 	 * Nota : if folder exists, if you call folder/subfolder, the folder "subfolder" will be created in "folder"
 	 */
 	public void createFolder(String nameFolder){
-		
+
 		String safeName = nameFolder.replaceAll("/", "_").replaceAll(" ", "_").replace("\\", "_");
-		
+
 		Metadata metadata = new JSonSerializer(Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/cloud/"+nameCloud+".json").deserialize();
 		OAuthConsumer consumer = new DefaultOAuthConsumer(metadata.browse("app_key"),metadata.browse("app_secret"));
 		consumer.setTokenWithSecret(metadata.browse("tokenA"), metadata.browse("tokenS"));
 		Metadata metaPattern = new JSonSerializer(Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/cloud/"+type+"Pattern.json").deserialize();
 
+		Metadata list;
+
+		String nameFile = safeName.substring(0, nameFolder.lastIndexOf("@"));
+		String checksum = safeName.substring(nameFolder.lastIndexOf("@")+1);
+
+		System.out.println("providerwebdav : " + nameFile + " " + checksum);
+
+		//Get the list of files
+		try {
+			Packet listPacket = download("list.json");
+			InputStream stream = new ByteArrayInputStream(listPacket.getData());
+			list = new JSonSerializer().deserializeStream(stream);
+			if(list==null){
+				list=new Metadata();
+			}
+		} catch (CloudNotAvailableException e1) {
+			//if the file doesn't exist
+			System.out.println("no list.json");
+			list = new Metadata();
+		}
+		
+
 		URL url;
 		try {
+			//creation of a folder
 			url = new URL(metaPattern.browse("create_folder")+safeName);
 			HttpURLConnection request = (HttpURLConnection) url.openConnection();
 
@@ -340,6 +365,20 @@ public class ProviderCloud implements Provider{
 			request.connect();
 			System.out.println("Response: " + request.getResponseCode() + " "+ request.getResponseMessage());
 			
+			//update of the list
+			list.addContent(nameFile, checksum);
+			
+			//Upload the metadata to the cloud
+			String mPath =  Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/temp.json";
+			list.serialize(Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/temp.json");
+			File mFile = new File(mPath);
+			byte[] b = new byte[(int)mFile.length()];
+			new FileInputStream(mFile).read(b);
+			Packet listPacket = new Packet("list.json", b);
+			listPacket.setMetadata(new Metadata());
+			upload(listPacket);
+			mFile.delete();
+
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		} catch (ProtocolException e) {
@@ -351,6 +390,8 @@ public class ProviderCloud implements Provider{
 		} catch (OAuthCommunicationException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (CloudNotAvailableException e) {
 			e.printStackTrace();
 		}
 	}

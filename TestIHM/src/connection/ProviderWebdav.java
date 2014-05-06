@@ -1,6 +1,9 @@
 package connection;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -58,12 +61,12 @@ public class ProviderWebdav implements Provider {
 	public void upload(Packet packet) throws CloudNotAvailableException{
 		Metadata metadata = new JSonSerializer(Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/cloud/"+serverName+".json").deserialize();
 		File mFile;
-		String simpleName;
-		if(packet.getName().contains("/")){
-			simpleName=packet.getName().substring(packet.getName().lastIndexOf("/")+1);
-		}else{
-			simpleName=packet.getName();
-		}
+		String simpleName=packet.getName();
+//		if(packet.getName().contains("/")){
+//			simpleName=packet.getName().substring(packet.getName().lastIndexOf("/")+1);
+//		}else{
+//			simpleName=packet.getName();
+//		}
 		
 		PutMethod upload = new PutMethod(metadata.browse("URLServer") + simpleName);
 		PutMethod uploadMeta = new PutMethod(metadata.browse("URLServer") + simpleName+".json");
@@ -72,9 +75,9 @@ public class ProviderWebdav implements Provider {
 		try {
 			mFile = new File(Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/file/meta.json");
 			packet.getMetadata().serialize(mFile.getPath());
-//			mFile = File.createTempFile("meta", ".tmp");
+
 			f = new File(Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/file/temp"+packet.getExtension());
-//			meta.serialize(mFile.getPath());
+
 			
 			FileOutputStream output = new FileOutputStream(f);
 			System.out.println("ok output stream");
@@ -160,17 +163,68 @@ public class ProviderWebdav implements Provider {
 
 	@Override
 	public void createFolder(String nameFolder) {
+		System.out.println("provider webdav : create_folder method");
 		String safeName = nameFolder.replaceAll("/", "_").replaceAll(" ", "_").replace("\\", "_");
 		Metadata metadata = new JSonSerializer(Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/cloud/"+serverName+".json").deserialize();
 		MkColMethod uploadFolder = new MkColMethod(metadata.browse("URLServer")+safeName);
+		Metadata list;
+		
+		String nameFile = safeName.substring(0, nameFolder.lastIndexOf("@"));
+		String checksum = safeName.substring(nameFolder.lastIndexOf("@")+1);
+		
+		System.out.println("providerwebdav : " + nameFile + " " + checksum);
+		
+		//Get the list of files
 		try {
+			Packet listPacket = download("list.json");
+			InputStream stream = new ByteArrayInputStream(listPacket.getData());
+			list = new JSonSerializer().deserializeStream(stream);
+			if(list==null){
+				list=new Metadata();
+			}
+		} catch (CloudNotAvailableException e1) {
+			//if the file doesn't exist
+			System.out.println("no list.json");
+			list = new Metadata();
+		}
+		
+		try {			
+			//creates the folder and update the metadata
 			client.executeMethod(uploadFolder);
+			list.addContent(nameFile, checksum);
 		} catch (HttpException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		
+		//Upload the metadata to the cloud
+		String mPath =  Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/temp.json";
+		list.serialize(Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/temp.json");
+		File mFile = new File(mPath);
+		byte[] b = new byte[(int)mFile.length()];
+		try {
+			new FileInputStream(mFile).read(b);
+			Packet listPacket = new Packet("list.json", b);
+			listPacket.setMetadata(new Metadata());
+			
+			upload(listPacket);
+			mFile.delete();
+			
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (CloudNotAvailableException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		
+		
+		
 	}
+
 }
 
