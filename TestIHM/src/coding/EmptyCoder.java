@@ -19,4 +19,9 @@ public class EmptyCoder implements Coder {
 		return "empty";
 	}
 
+	@Override
+	public int getInputSize() {
+		return 3;
+	}
+
 }
