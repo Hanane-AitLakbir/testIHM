@@ -1,6 +1,5 @@
 package connection;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
@@ -9,13 +8,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
-
-import com.example.testihm.AddLocationStorage;
+import java.util.HashMap;
+import java.util.Set;
 
 import metadata.JSonSerializer;
 import metadata.Metadata;
@@ -394,5 +393,27 @@ public class ProviderCloud implements Provider{
 		} catch (CloudNotAvailableException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public String[] getFiles(){
+	
+		try {
+			Packet listPacket = download("list.json");
+			InputStream stream = new ByteArrayInputStream(listPacket.getData());
+			String metadataPath = Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/temp.json";
+			
+			Metadata list = new JSonSerializer(Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/temp.json").deserializeStream(stream);
+			list.serialize(metadataPath);
+			
+			Set<String> set = list.getMap().keySet();
+			new File(metadataPath).delete();
+			return set.toArray(new String[set.size()]);
+			
+		} catch (CloudNotAvailableException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return null;
 	}
 }

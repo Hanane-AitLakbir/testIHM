@@ -9,4 +9,5 @@ public interface Provider {
 	public void connect(WebBrowserOpener webBrowserOpener)throws CloudNotAvailableException;
 	public String getUrl();
 	public void createFolder(String nameFolder);
+	public String[] getFiles();
 }

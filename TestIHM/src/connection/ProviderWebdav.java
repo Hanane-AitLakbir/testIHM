@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Set;
 
 import metadata.JSonSerializer;
 import metadata.Metadata;
@@ -147,14 +148,6 @@ public class ProviderWebdav implements Provider {
 		return packet;
 	}
 
-//	private TreeMap<String,String> getId(){
-//		TreeMap<String, String> tree = new TreeMap<String,String>();
-//		Metadata meta = new JSonSerializer("C:/Users/aït-lakbir/Desktop/PIPTest/cloud/"+serverName+".json").deserialize();
-//		tree.put("id", meta.browse("id"));
-//		tree.put("password", meta.browse("password"));
-//		return tree;
-//	}
-
 	@Override
 	public String getUrl() {
 		
@@ -216,14 +209,30 @@ public class ProviderWebdav implements Provider {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (CloudNotAvailableException e) {
-			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+			
+	}
+
+	public String[] getFiles(){
+		
+		try {
+			Packet listPacket = download("list.json");
+			InputStream stream = new ByteArrayInputStream(listPacket.getData());
+			String metadataPath = Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/temp.json";
+			
+			Metadata list = new JSonSerializer(Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/temp.json").deserializeStream(stream);
+			list.serialize(metadataPath);
+			
+			Set<String> set = list.getMap().keySet();
+			new File(metadataPath).delete();
+			return set.toArray(new String[set.size()]);
+			
+		} catch (CloudNotAvailableException e) {
 			e.printStackTrace();
 		}
 		
-		
-		
-		
-		
+		return null;
 	}
 
 }
