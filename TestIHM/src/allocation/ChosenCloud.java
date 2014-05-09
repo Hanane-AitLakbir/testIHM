@@ -56,6 +56,7 @@ public class ChosenCloud implements AllocationStrategy{
 		while(j<nbrOfClouds){
 			providers[j] = ProviderFactory.getProvider(clouds[j]);
 			System.out.println(j+" ok "+ (providers[j]==null));
+			j++;
 		}
 		System.out.println("getProviders OK");
 		int i=0;
