@@ -8,6 +8,6 @@ public interface Provider {
 	public Packet download(String name) throws CloudNotAvailableException;
 	public void connect(WebBrowserOpener webBrowserOpener)throws CloudNotAvailableException;
 	public String getUrl();
-	public void createFolder(String nameFolder);
+	public void createFolder(String nameFolder, String fileChecksum);
 	public String[] getFiles();
 }

@@ -319,7 +319,7 @@ public class ProviderCloud implements Provider{
 	 * Creates a folder in the root "dropbox". If the folder with the same name exists, the method will do nothing.
 	 * Nota : if folder exists, if you call folder/subfolder, the folder "subfolder" will be created in "folder"
 	 */
-	public void createFolder(String nameFolder){
+	public void createFolder(String nameFolder, String fileChecksum){
 
 		String safeName = nameFolder.replaceAll("/", "_").replaceAll(" ", "_").replace("\\", "_");
 
@@ -330,10 +330,7 @@ public class ProviderCloud implements Provider{
 
 		Metadata list;
 
-		String nameFile = safeName.substring(0, nameFolder.lastIndexOf("@"));
-		String checksum = safeName.substring(nameFolder.lastIndexOf("@")+1);
-
-		System.out.println("providerwebdav : " + nameFile + " " + checksum);
+		System.out.println("providerwebdav : " + safeName + " " + fileChecksum);
 
 		//Get the list of files
 		try {
@@ -365,7 +362,7 @@ public class ProviderCloud implements Provider{
 			System.out.println("Response: " + request.getResponseCode() + " "+ request.getResponseMessage());
 			
 			//update of the list
-			list.addContent(nameFile, checksum);
+			list.addContent(safeName, fileChecksum);
 			
 			//Upload the metadata to the cloud
 			String mPath =  Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/temp.json";

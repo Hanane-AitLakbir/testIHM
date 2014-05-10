@@ -155,17 +155,14 @@ public class ProviderWebdav implements Provider {
 	}
 
 	@Override
-	public void createFolder(String nameFolder) {
+	public void createFolder(String nameFolder, String fileChecksum) {
 		System.out.println("provider webdav : create_folder method");
 		String safeName = nameFolder.replaceAll("/", "_").replaceAll(" ", "_").replace("\\", "_");
 		Metadata metadata = new JSonSerializer(Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/cloud/"+serverName+".json").deserialize();
 		MkColMethod uploadFolder = new MkColMethod(metadata.browse("URLServer")+safeName);
 		Metadata list;
 		
-		String nameFile = safeName.substring(0, nameFolder.lastIndexOf("@"));
-		String checksum = safeName.substring(nameFolder.lastIndexOf("@")+1);
-		
-		System.out.println("providerwebdav : " + nameFile + " " + checksum);
+		System.out.println("providerwebdav : " + safeName + " " + fileChecksum);
 		
 		//Get the list of files
 		try {
@@ -184,7 +181,7 @@ public class ProviderWebdav implements Provider {
 		try {			
 			//creates the folder and update the metadata
 			client.executeMethod(uploadFolder);
-			list.addContent(nameFile, checksum);
+			list.addContent(safeName, fileChecksum);
 		} catch (HttpException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
