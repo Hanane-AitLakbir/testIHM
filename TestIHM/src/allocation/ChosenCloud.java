@@ -70,7 +70,7 @@ public class ChosenCloud implements AllocationStrategy{
 			System.out.println("chosenCloud "+clouds[i%nbrOfClouds]);
 			try {
 				// Create the folder in the cloud and update metadata
-				providers[i%nbrOfClouds].createFolder(simpleName+"@"+checksum);
+				providers[i%nbrOfClouds].createFolder(simpleName, checksum);
 				providers[i%nbrOfClouds].upload(codedPackets[i]);
 				i++;
 			} catch (CloudNotAvailableException e) {
