@@ -107,7 +107,7 @@ public class ConfigUploadActivity extends Activity {
 						System.out.println(clouds.toString());
 
 						try {
-							strategy.upLoad(fileToUpload, nbPackets,clouds, coder);
+							strategy.upLoad(fileToUpload,clouds, coder);
 
 						} catch (FileNotFoundException e) {
 							e.printStackTrace();

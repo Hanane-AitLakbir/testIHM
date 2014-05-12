@@ -11,6 +11,7 @@ import utilities.ComputeChecksum;
 import utilities.Packet;
 import allocation.AllocationStrategy;
 import allocation.ChosenCloud;
+import allocation.Downloader;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.Bundle;
@@ -95,7 +96,7 @@ public class DownloadActivity extends Activity {
 						Coder coder = new EmptyCoder();
 
 						try {
-							strategy.downLoad(fileName, directory, coder);
+							Downloader.downLoad(fileName, directory, coder);
 						} catch (IOException e) {
 							e.printStackTrace();
 						}

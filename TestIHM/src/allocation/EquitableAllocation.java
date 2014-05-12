@@ -21,13 +21,13 @@ import coding.Coder;
 
 public class EquitableAllocation implements AllocationStrategy{
 
-	public boolean upLoad(String fileName, int nbrOfPackets, String[] clouds, Coder coder) 
+	public boolean upLoad(String fileName, String[] clouds, Coder coder) 
 			throws FileNotFoundException, IOException, InvalidParameterException {
-		if(nbrOfPackets<=0||clouds.length<1){
+		if(clouds.length<1){
 			throw new InvalidParameterException();
 		}
 		
-		Packet[] splittedPackets = Splitter.split(fileName, nbrOfPackets);
+		Packet[] splittedPackets = Splitter.split(fileName, coder.getInputSize());
 		Packet[] codedPackets = coder.encode(splittedPackets);
 		long minimalSpace = codedPackets[0].getData().length;
 		
