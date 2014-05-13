@@ -28,20 +28,21 @@ public class Downloader {
 		Metadata listCloud= new JSonSerializer(Environment.getExternalStorageDirectory().getPath()+"/pip/metadata/cloud/list.json").deserialize();
 		List<Provider> providersList  = new ArrayList<Provider>();
 		Provider buffer;
-		Metadata metadataBuffer;
+		//Metadata metadataBuffer;
 		String checksum = null;
+		HashMap<String, String> map_fileName_checksum;
 		for(String cloud : listCloud.getMap().keySet()){
 			buffer = ProviderFactory.getProvider(cloud);
-			try {
-				metadataBuffer = new JSonSerializer().deserializeStream(new ByteArrayInputStream(buffer.download("list.json").getData()));
-				if(metadataBuffer.getMap().containsKey(fileName)){
-					checksum = metadataBuffer.browse(fileName); //get the checksum
-					providersList.add(buffer);
-				}
-			} catch (CloudNotAvailableException e) {}
+			map_fileName_checksum = Downloader.getFiles(buffer);
+			//metadataBuffer = new JSonSerializer().deserializeStream(new ByteArrayInputStream(buffer.download("list.json").getData()));
+			if(map_fileName_checksum.containsKey(fileName)){
+				//checksum = metadataBuffer.browse(fileName); //get the checksum
+				checksum = map_fileName_checksum.get(fileName);
+				providersList.add(buffer);
+			}
 		}
 		System.out.println("Providers found : "+providersList.size());
-		Provider[] providers = (Provider[]) providersList.toArray();
+		//Provider[] providers = (Provider[]) providersList.toArray();
 
 		if(checksum==null) return false; //file not found -> maybe throw an exception
 
@@ -54,19 +55,24 @@ public class Downloader {
 		int i=0;
 		//Download packets
 		while(nbrOfDownloaded<nbrOfPackets&&packetIndex<2*nbrOfPackets){
-			while(i<providers.length){
+			while(i<providersList.size()){
 				try {
-					packets[nbrOfDownloaded] = providers[i].download(simpleName+"/"+coder.getName()+"_"+packetIndex+"."+extension);
-					if(packets[nbrOfDownloaded]!=null&&packets[nbrOfDownloaded].getData()!=null&&packets[nbrOfDownloaded].getData().length!=0){
-						//download succeeded
-						if(packets[nbrOfDownloaded].getMetadata().browse("checksum").equals(ComputeChecksum.getChecksum(packets[nbrOfDownloaded].getData()))){
-							indices[nbrOfDownloaded] = packetIndex;
-							nbrOfDownloaded++;
-							packetIndex++;
+					if(nbrOfDownloaded<nbrOfPackets){
+						packets[nbrOfDownloaded] = providersList.get(i).download(fileName +"/"+coder.getName()+"_"+packetIndex+"."+extension);
+						if(packets[nbrOfDownloaded]!=null&&packets[nbrOfDownloaded].getData()!=null&&packets[nbrOfDownloaded].getData().length!=0){
+							//download succeeded
+							if(packets[nbrOfDownloaded].getMetadata().browse("checksum").equals(ComputeChecksum.getChecksum(packets[nbrOfDownloaded].getData()))){
+								indices[nbrOfDownloaded] = packetIndex;
+								nbrOfDownloaded++;
+								packetIndex++;
+							}
+						}else{
+							//try to download from the next cloud
+							i++;
 						}
 					}else{
-						//try to download from the next cloud
-						i++;
+						//if enough packets have been downloaded
+						break;
 					}
 				} catch (CloudNotAvailableException e) {
 					i++;
