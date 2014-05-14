@@ -273,6 +273,9 @@ public class ProviderCloud implements Provider{
 
 			System.out.println("Response: " + request.getResponseCode() + " "
 					+ request.getResponseMessage());
+			if(request.getResponseCode()==HttpURLConnection.HTTP_OK){
+				return packet;
+			}
 
 		} catch (MalformedURLException e) {
 			System.out.println("MalformedURLException");
@@ -302,7 +305,7 @@ public class ProviderCloud implements Provider{
 		}
 
 		//System.out.println("ProviderCloud : " + packet.getData().length);
-		return packet;
+		return null;
 	}
 
 	private byte[] toByteArray(DataInputStream is) throws IOException{

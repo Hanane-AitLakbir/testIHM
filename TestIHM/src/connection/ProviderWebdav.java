@@ -18,6 +18,7 @@ import org.apache.commons.httpclient.HostConfiguration;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpConnectionManager;
 import org.apache.commons.httpclient.HttpException;
+import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
@@ -140,13 +141,17 @@ public class ProviderWebdav implements Provider {
 				data[i] = dataList.get(i);
 			}
 			packet = new Packet(name.substring(0, name.lastIndexOf('.')),data);
+			
+			if(httpMethod.getStatusCode()==HttpStatus.SC_OK){
+				return packet;
+			}
 		} catch (HttpException e) {
 			throw new CloudNotAvailableException();
 		} catch (IOException e) {
 			throw new CloudNotAvailableException();
 		}
 		
-		return packet;
+		return null;
 	}
 
 	@Override
