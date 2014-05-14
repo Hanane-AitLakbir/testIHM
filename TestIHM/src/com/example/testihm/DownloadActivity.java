@@ -9,7 +9,7 @@ import metadata.JSonSerializer;
 import metadata.Metadata;
 import utilities.ComputeChecksum;
 import utilities.Packet;
-import allocation.AllocationStrategy;
+import allocation.UploadStrategy;
 import allocation.ChosenCloud;
 import allocation.Downloader;
 import android.app.Activity;
@@ -91,7 +91,7 @@ public class DownloadActivity extends Activity {
 					@Override
 					public void run() {
 						String fileName = parent.getItemAtPosition(position).toString();
-						AllocationStrategy strategy = new ChosenCloud();
+						UploadStrategy strategy = new ChosenCloud();
 						String directory = Environment.getExternalStorageDirectory().getPath() + "/downloadPIP";
 						Coder coder = new EmptyCoder();
 

@@ -18,7 +18,7 @@ import connection.CloudNotAvailableException;
 import connection.Provider;
 import connection.ProviderFactory;
 
-public class ChosenCloud implements AllocationStrategy{
+public class ChosenCloud implements UploadStrategy{
 
 	public boolean upLoad(String fileName, String[] clouds, Coder coder) throws FileNotFoundException, IOException, InvalidParameterException{
 		String simpleName = fileName.substring(fileName.lastIndexOf("/")+1);

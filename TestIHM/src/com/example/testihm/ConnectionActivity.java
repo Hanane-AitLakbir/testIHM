@@ -31,9 +31,23 @@ public class ConnectionActivity extends Activity implements WebBrowserOpener{
 		
 		//webView = (WebView) findViewById(R.id.webview);
 		webView = new WebView(getApplicationContext());
-		LayoutParams params = new LayoutParams(10000,400);
-		params.setMargins(10, 30, 10, 10);
-		webView.setLayoutParams(params);
+//		LayoutParams params = new LayoutParams(10000,10000);
+//		params.setMargins(0, 30, 0, 0);
+//		webView.setLayoutParams(params);
+		webView.setHorizontalScrollBarEnabled(true);
+		webView.setVerticalScrollBarEnabled(true);
+		
+		Provider provider = ProviderFactory.getProvider(name);
+		String url = provider.getUrl();
+		System.out.println(url);
+		webView.getSettings().setJavaScriptEnabled(true); 
+		webView.loadUrl(url);
+		webView.clearView();
+		webView.measure(100, 100);
+		webView.getSettings().setUseWideViewPort(true);
+		webView.getSettings().setLoadWithOverviewMode(true);
+		webView.setHorizontalScrollBarEnabled(true);
+		webView.setVerticalScrollBarEnabled(true);
 
 		//webView.loadUrl("http://www.google.fr");
 		LinearLayout ll = (LinearLayout) findViewById(R.id.layoutConnection);
@@ -61,19 +75,24 @@ public class ConnectionActivity extends Activity implements WebBrowserOpener{
 			}
 		});
 		
-		Button connectionButton = (Button) findViewById(R.id.connectButton);
-		connectionButton.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				Provider provider = ProviderFactory.getProvider(name);
-				String url = provider.getUrl();
-				//System.out.println(url);
-				webView.loadUrl(url);
-				webView.setHorizontalScrollBarEnabled(true);
-				webView.setVerticalScrollBarEnabled(true);
-			}
-		});
+//		Button connectionButton = (Button) findViewById(R.id.connectButton);
+//		connectionButton.setOnClickListener(new OnClickListener() {
+//			
+//			@Override
+//			public void onClick(View v) {
+//				Provider provider = ProviderFactory.getProvider(name);
+//				String url = provider.getUrl();
+//				System.out.println(url);
+//				webView.getSettings().setJavaScriptEnabled(true); 
+//				webView.loadUrl(url);
+//				webView.clearView();
+//				webView.measure(100, 100);
+//				webView.getSettings().setUseWideViewPort(true);
+//				webView.getSettings().setLoadWithOverviewMode(true);
+//				webView.setHorizontalScrollBarEnabled(true);
+//				webView.setVerticalScrollBarEnabled(true);
+//			}
+//		});
 	}
 
 	@Override

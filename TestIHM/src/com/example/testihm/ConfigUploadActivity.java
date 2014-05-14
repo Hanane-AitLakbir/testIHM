@@ -7,7 +7,7 @@ import java.util.Set;
 
 import metadata.JSonSerializer;
 import metadata.Metadata;
-import allocation.AllocationStrategy;
+import allocation.UploadStrategy;
 import allocation.ChosenCloud;
 import allocation.InvalidParameterException;
 import android.app.Activity;
@@ -96,7 +96,7 @@ public class ConfigUploadActivity extends Activity {
 						}
 						System.out.println(nbPackets);
 						Coder coder = new EmptyCoder();
-						AllocationStrategy strategy = new ChosenCloud();
+						UploadStrategy strategy = new ChosenCloud();
 
 						String[] clouds = new String[chosenCloudsList.size()];
 						int i=0;
