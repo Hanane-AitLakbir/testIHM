@@ -86,6 +86,7 @@ public class ProviderWebdav implements Provider {
 			output.write(packet.getData());
 			output.close();
 
+			System.out.println("ok creation temp file");
 			if(f.exists() && mFile.exists()) {
 				//Sending of the packet file
 				RequestEntity requestEntity = new FileRequestEntity(f,packet.getExtension());
