@@ -9,9 +9,9 @@ import metadata.JSonSerializer;
 import metadata.Metadata;
 import utilities.ComputeChecksum;
 import utilities.Packet;
+import allocation.Downloader;
 import allocation.UploadStrategy;
 import allocation.ChosenCloud;
-import allocation.Downloader;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.Bundle;
@@ -91,12 +91,11 @@ public class DownloadActivity extends Activity {
 					@Override
 					public void run() {
 						String fileName = parent.getItemAtPosition(position).toString();
-						UploadStrategy strategy = new ChosenCloud();
 						String directory = Environment.getExternalStorageDirectory().getPath() + "/downloadPIP";
 						Coder coder = new EmptyCoder();
 
 						try {
-							Downloader.downLoad(fileName, directory, coder);
+							Downloader.downLoad(fileName, directory);
 						} catch (IOException e) {
 							e.printStackTrace();
 						}

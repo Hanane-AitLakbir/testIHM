@@ -16,12 +16,13 @@ import utilities.ComputeChecksum;
 import utilities.Packet;
 import android.os.Environment;
 import coding.Coder;
+import coding.CoderFactory;
 import connection.CloudNotAvailableException;
 import connection.Provider;
 import connection.ProviderFactory;
 
 public class Downloader {
-	static public boolean downLoad(String fileName, String directory, Coder coder) throws IOException {
+	static public boolean downLoad(String fileName, String directory) throws IOException {
 		String simpleName = fileName.substring(0, fileName.lastIndexOf("."));
 		String extension = fileName.substring(fileName.lastIndexOf(".")+1);
 
@@ -29,7 +30,7 @@ public class Downloader {
 		List<Provider> providersList  = new ArrayList<Provider>();
 		Provider buffer;
 		//Metadata metadataBuffer;
-		String checksum = null;
+		String info = null;
 		HashMap<String, String> map_fileName_checksum;
 		for(String cloud : listCloud.getMap().keySet()){
 			buffer = ProviderFactory.getProvider(cloud);
@@ -37,54 +38,59 @@ public class Downloader {
 			//metadataBuffer = new JSonSerializer().deserializeStream(new ByteArrayInputStream(buffer.download("list.json").getData()));
 			if(map_fileName_checksum.containsKey(fileName)){
 				//checksum = metadataBuffer.browse(fileName); //get the checksum
-				checksum = map_fileName_checksum.get(fileName);
+				info = map_fileName_checksum.get(fileName);
 				providersList.add(buffer);
 			}
 		}
 		System.out.println("Providers found : "+providersList.size());
 		//Provider[] providers = (Provider[]) providersList.toArray();
 
-		if(checksum==null) return false; //file not found -> maybe throw an exception
+		if(info==null) return false; //file not found -> maybe throw an exception
 
-		int nbrOfPackets = coder.getInputSize();
+		String[] infos = info.split("[_]");
+		if(infos.length<4) return false; //Not enough info
+		String checksum = infos[0];
+		String coderName = infos[1];
+		int inputPackets = Integer.parseInt(infos[2]);
+		int outputPackets = Integer.parseInt(infos[3]);
+
+		Coder coder = CoderFactory.getCoder(coderName);
 
 		int nbrOfDownloaded=0;
 		int packetIndex=0;
-		Packet[] packets = new Packet[nbrOfPackets];
-		int[] indices = new int[nbrOfPackets];
+		Packet[] packets = new Packet[inputPackets];
+		int[] indices = new int[inputPackets];
 		int i=0;
 		//Download packets
-		while(nbrOfDownloaded<nbrOfPackets&&packetIndex<2*nbrOfPackets){
-			while(i<providersList.size()){
-				try {
-					if(nbrOfDownloaded<nbrOfPackets){
-						packets[nbrOfDownloaded] = providersList.get(i).download(fileName +"/"+coder.getName()+"_"+packetIndex+"."+extension);
-						if(packets[nbrOfDownloaded]!=null&&packets[nbrOfDownloaded].getData()!=null&&packets[nbrOfDownloaded].getData().length!=0){
-							//download succeeded
-							if(packets[nbrOfDownloaded].getMetadata().browse("checksum").equals(ComputeChecksum.getChecksum(packets[nbrOfDownloaded].getData()))){
-								indices[nbrOfDownloaded] = packetIndex;
-								nbrOfDownloaded++;
-								packetIndex++;
+		while(nbrOfDownloaded<inputPackets&&packetIndex<outputPackets){
+			for(Provider p : providersList){
+				for(int j=0; j<outputPackets; j++){
+					try {
+						if(nbrOfDownloaded<inputPackets){
+							packets[nbrOfDownloaded] = p.download(fileName +"/"+coder.getName()+"_"+j+"."+extension);
+							if(packets[nbrOfDownloaded]!=null){
+								//download succeeded
+								if(packets[nbrOfDownloaded].getMetadata().browse("checksum").equals(ComputeChecksum.getChecksum(packets[nbrOfDownloaded].getData()))){
+									indices[nbrOfDownloaded] = j;
+									nbrOfDownloaded++;
+								}
+							}else{
+								//try to download from the next cloud
+								i++;
 							}
 						}else{
-							//try to download from the next cloud
-							i++;
+							//if enough packets have been downloaded
+							break;
 						}
-					}else{
-						//if enough packets have been downloaded
-						break;
+					} catch (CloudNotAvailableException e) {
+						i++;
 					}
-				} catch (CloudNotAvailableException e) {
-					i++;
 				}
 			}
-			//current index not found, try the next
-			packetIndex++;
-			i=0;
 		}
 
 		//Not enough packets downloaded
-		if(nbrOfDownloaded<nbrOfPackets) return false;
+		if(nbrOfDownloaded<inputPackets) return false;
 
 		Packet[] decodedPackets = coder.decode(packets, indices);
 		File file = Merger.merge(directory+"/"+fileName, decodedPackets);

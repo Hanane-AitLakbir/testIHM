@@ -70,7 +70,7 @@ public class EquitableUpload implements UploadStrategy{
 			current = getEmptier(spaces, previous);
 			try {
 				if(!folderCreated.get(current)){
-					providers.get(current).createFolder(simpleName, checksum);
+					providers.get(current).createFolder(simpleName, checksum+"_"+coder.getName()+"_"+splittedPackets.length+"_"+codedPackets.length);
 				}
 				providers.get(current).upload(codedPackets[i]);
 				previous = current;

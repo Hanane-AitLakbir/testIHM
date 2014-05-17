@@ -45,7 +45,7 @@ public class ChosenCloud implements UploadStrategy{
 		int j = 0;
 		while(j<nbrOfClouds){
 			providers[j] = ProviderFactory.getProvider(clouds[j]);
-			providers[j].createFolder(simpleName, checksum);
+			providers[j].createFolder(simpleName, checksum+"_"+coder.getName()+"_"+splittedPackets.length+"_"+codedPackets.length);
 			System.out.println(j+" ok "+ (providers[j]==null));
 			j++;
 		}
